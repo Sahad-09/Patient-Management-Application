@@ -2,7 +2,7 @@ import { revalidatePatients } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 
 async function getPatients() {
-  const endpoint = 'http://localhost:3000/api/patients/';
+  const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/api/patients/`;
   const response = await fetch(endpoint, { next: { tags: ['patients'] } });
   return response.json();
 }
