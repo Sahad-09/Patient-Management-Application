@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 export async function revalidatePatients() {
   revalidateTag('patients')
-  // redirect('/')
+  redirect('/')
 }
 
 // export async function revalidateTodos() {
