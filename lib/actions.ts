@@ -13,7 +13,7 @@ export async function revalidatePatients() {
 //   redirect('/')
 // }
 
-export async function revalidateAll() {
-  revalidatePath('/')
-  redirect('/')
-}
+// export async function revalidateAll() {
+//   revalidatePath('/')
+//   redirect('/')
+// }
