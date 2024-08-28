@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 async function getPatients() {
   const endpoint = `${process.env.NEXT_PUBLIC_URL}/api/patients`;
-  const response = await fetch(endpoint, { next: { tags: ['patients'] } });
+  const response = await fetch(endpoint);
   console.log(response);
   
   return response.json();
