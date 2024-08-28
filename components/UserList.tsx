@@ -1,4 +1,4 @@
-import { revalidatePatients } from '@/lib/actions';
+// import { revalidatePatients } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 
 async function getPatients() {
@@ -17,7 +17,7 @@ export default async function Patients() {
         className='flex items-center justify-between'
       > */}
         <h3 className='font-serif text-xl'>Patients</h3>
-        <Button formAction={revalidatePatients} size='sm'>Revalidate Tag</Button>
+        {/* <Button formAction={revalidatePatients} size='sm'>Revalidate Tag</Button> */}
       {/* </form> */}
       <div className='mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         {patients.map((patient: any) => (
