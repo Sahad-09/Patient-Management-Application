@@ -2,13 +2,17 @@
 import { Button } from '@/components/ui/button';
 
 async function getPatients() {
-  const endpoint = `${process.env.NEXT_PUBLIC_API_URL}/api/patients`;
+  const endpoint = `${process.env.NEXT_PUBLIC_URL}/api/patients`;
   const response = await fetch(endpoint, { next: { tags: ['patients'] } });
+  console.log(response);
+  
   return response.json();
 }
 
 export default async function Patients() {
   const patients = await getPatients();
+  console.log("PAtients, " + patients);
+  
 
   return (
     <section className='mt-16'>
