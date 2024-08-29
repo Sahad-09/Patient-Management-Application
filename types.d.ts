@@ -1,8 +1,10 @@
 // types.d.ts
 
-export interface User {
-    id: string;
-    email: string;
-    name: string | null;
-  }
-  
+export interface Patient {
+  id: string;
+  name: string;
+  age: string;
+  sex: string;
+  contact: string;
+  dateTime: Date;
+}
