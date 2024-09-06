@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createPatient } from "./patients";
 import { deletePatient } from "./patients";
+import { updatePatient } from "./patients";
 
 export async function createPatientAction(
   name: string, 
@@ -18,6 +19,19 @@ export async function deletePatientAction(id: string) {
   await deletePatient(id);
   revalidatePath('/patients');
 }
+
+
+export async function updatePatientAction(
+  id: string,
+  name: string,
+  age: string,
+  sex: string,
+  contact: string
+) {
+  await updatePatient(id, name, age, sex, contact);
+  revalidatePath('/patients');
+}
+
 
 
 
