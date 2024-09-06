@@ -44,7 +44,7 @@ const EditPatient: React.FC<EditPatientProps> = ({ patient }) => {
           <SheetHeader>
             <SheetTitle>Edit Patient</SheetTitle>
             <SheetDescription>
-              Edit patient details here. Click save when you're done.
+              Edit patient details here. Click save when you&apos;re done.
             </SheetDescription>
           </SheetHeader>
           <form
