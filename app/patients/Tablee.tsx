@@ -27,6 +27,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -37,6 +46,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DeletePatient from "@/components/DeletePatient"; // named import here
+import EditPatient from "@/components/EditPatient"; // named import here
 
 // DateTimeCell component for client-side date formatting
 const DateTimeCell: React.FC<{ dateTime: string }> = ({ dateTime }) => {
@@ -124,11 +134,9 @@ export const columns: ColumnDef<Patient>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => alert(`Edit patient with ID: ${patient.id}`)}
-            >
-              Edit
-            </DropdownMenuItem>
+            <Dialog>
+              <EditPatient patient={patient} />
+            </Dialog>
             <DeletePatient patient={patient} />
           </DropdownMenuContent>
         </DropdownMenu>

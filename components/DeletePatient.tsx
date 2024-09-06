@@ -1,4 +1,4 @@
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Patient } from "@/types";
 import { deletePatientAction } from "@/lib/actions";
 
@@ -9,13 +9,14 @@ interface DeletePatientProps {
 const DeletePatient: React.FC<DeletePatientProps> = ({ patient }) => {
   async function handleDelete(id: string) {
     await deletePatientAction(id);
+    // Optionally, you might want to provide user feedback or handle state updates here.
   }
 
   return (
     <div>
-      <DropdownMenuItem onClick={() => handleDelete(patient.id)}>
+      <Button variant="destructive" onClick={() => handleDelete(patient.id)}>
         Delete
-      </DropdownMenuItem>
+      </Button>
     </div>
   );
 };
