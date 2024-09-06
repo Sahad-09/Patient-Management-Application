@@ -8,3 +8,37 @@ export async function getPatients(){
         return {error}
     }
 }
+
+export async function createPatient(
+    name: string, 
+    age: string, 
+    sex: string, 
+    contact: string
+  ) {
+      try {
+          const patient = await prisma.patient.create({
+              data: {
+                  name,
+                  age,
+                  sex,
+                  contact,
+              }
+          });
+          return { patient };
+      } catch (error) {
+          return { error };
+      }
+  }
+  
+
+  export async function deletePatient(id: string) {
+    try {
+      const patient = await prisma.patient.delete({
+        where: { id },
+      });
+      return { patient };
+    } catch (error) {
+      return { error };
+    }
+  }
+  

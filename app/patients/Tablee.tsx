@@ -36,6 +36,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import DeletePatient from "@/components/DeletePatient"; // named import here
 
 // DateTimeCell component for client-side date formatting
 const DateTimeCell: React.FC<{ dateTime: string }> = ({ dateTime }) => {
@@ -128,11 +129,7 @@ export const columns: ColumnDef<Patient>[] = [
             >
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => alert(`Delete patient with ID: ${patient.id}`)}
-            >
-              Delete
-            </DropdownMenuItem>
+            <DeletePatient patient={patient} />
           </DropdownMenuContent>
         </DropdownMenu>
       );
