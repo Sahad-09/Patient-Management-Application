@@ -14,7 +14,6 @@ export interface Details {
   // Add other fields if necessary
 }
 
-
 export interface Patient {
   id: string;
   name: string;
@@ -22,5 +21,5 @@ export interface Patient {
   sex: string;
   contact: string;
   dateTime: Date;
-  Details?: PatientDetails;
+  Details?: Details; // Changed from PatientDetails to Details
 }
