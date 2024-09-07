@@ -20,6 +20,8 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const response = await getPatientDetails(params.id);
+  const { id } = params; // Extract userId
+  console.log("Idddddddd", id);
 
   // Handle the response
   if ("error" in response) {
@@ -59,12 +61,13 @@ export default async function Page({ params }: PageProps) {
                   <li>
                     Treatment Presented: {detail.treatmentPresented || "N/A"}
                   </li>
+                  <li>Follow-up: {id || "N/A"}</li>
                   <li>Follow-up: {detail.followUp || "N/A"}</li>
                 </ul>
               </CardDescription>
             </CardContent>
             <CardFooter>
-              <EditDetails details={detail} userId={detail.userId} />
+              <EditDetails details={detail} userId={id} />
             </CardFooter>
           </Card>
         ))}
