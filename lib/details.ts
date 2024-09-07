@@ -1,17 +1,32 @@
 import prisma from './prismadb'
 
 
+// export async function getPatientDetails(id: string) {
+//   try {
+//     const patientDetails = await prisma.patient.findUnique({
+//       where: { id },
+//       include: { Details: true },  // Include the related Details model
+//     });
+//     return { patientDetails };
+//   } catch (error) {
+//     return { error };
+//   }
+// }
+
+
 export async function getPatientDetails(id: string) {
   try {
-    const patientDetails = await prisma.patient.findUnique({
-      where: { id },
-      include: { Details: true },  // Include the related Details model
+    // Fetch the details directly from the Details model based on the patient ID
+    const patientDetails = await prisma.details.findMany({
+      where: { userId: id }, // Assuming userId is the foreign key linking Details to Patient
     });
+
     return { patientDetails };
   } catch (error) {
     return { error };
   }
 }
+
 
   export async function createPatientDetail(
     chiefComplaint: string,

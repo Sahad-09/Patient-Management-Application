@@ -22,3 +22,9 @@ export interface Patient {
   dateTime: Date;
   Details?: Details; // Changed from PatientDetails to Details
 }
+
+export interface GetPatientDetailsResponse {
+  patientDetails?: Details[];
+  error?: unknown;
+}
+
