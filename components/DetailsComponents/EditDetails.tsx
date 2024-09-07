@@ -80,7 +80,7 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
           <SheetHeader className="mb-5">
             <SheetTitle>Edit Details</SheetTitle>
             <SheetDescription>
-              Edit patient details here. Click save when you're done.
+              Edit patient details here. Click save when you&apos;re done.
             </SheetDescription>
           </SheetHeader>
           <form
