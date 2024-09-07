@@ -11,7 +11,6 @@ export interface Details {
   finalDiagnosis: string | null;
   treatmentPresented: string | null;
   followUp: string | null;
-  // Add other fields if necessary
 }
 
 export interface Patient {

@@ -5,7 +5,6 @@ import EditDetails from "@/components/DetailsComponents/EditDetails";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -14,6 +13,9 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Details, Patient } from "@/types"; // Import the correct types
 
+interface PatientCardProps {
+  patient: Patient;
+}
 const defaultDetails: Details = {
   id: "",
   chiefComplaint: null,
@@ -28,7 +30,9 @@ const defaultDetails: Details = {
 };
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const { patientDetails } = await getPatientDetails(params.id);
+  const { patientDetails }: PatientCardProps = await getPatientDetails(
+    params.id
+  );
   // console.log(patientDetails);
 
   if (!patientDetails) {

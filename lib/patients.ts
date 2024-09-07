@@ -2,12 +2,26 @@ import prisma from './prismadb'
 
 export async function getPatients() {
   try {
-    const patients = await prisma.patient.findMany()
-    return { patients }
+    const patients = await prisma.patient.findMany({
+      include: {
+        Details: true,
+      },
+    });
+
+    // Convert null Details to undefined
+    const normalizedPatients = patients.map((patient) => ({
+      ...patient,
+      Details: patient.Details ?? undefined,
+    }));
+
+    return { patients: normalizedPatients };
   } catch (error) {
-    return { error }
+    return { patients: [] }; // Return an empty array in case of an error
   }
 }
+
+
+
 
 export async function createPatient(
   name: string,

@@ -145,9 +145,13 @@ export const columns: ColumnDef<Patient>[] = [
   },
 ];
 
+interface TableProps {
+  patients: Patient[];
+}
+
 // Update Tablee component to accept patients as a prop
 
-export function Tablee({ patients }: { patients: Patient[] | undefined }) {
+export function Tablee({ patients }: TableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
