@@ -20,6 +20,30 @@ export async function getPatients() {
   }
 }
 
+export async function getPatient(id: string) {
+  try {
+    const patient = await prisma.patient.findUnique({
+      where: { id },
+      include: { Details: true },
+    });
+
+    if (!patient) {
+      return { patient: null }; // Return null if the patient is not found
+    }
+
+    // Convert null Details to undefined
+    const normalizedPatient = {
+      ...patient,
+      Details: patient.Details ?? undefined,
+    };
+
+    return { patient: normalizedPatient };
+  } catch (error) {
+    console.error('Error fetching patient:', error);
+    return { patient: null }; // Return null in case of an error
+  }
+}
+
 
 
 

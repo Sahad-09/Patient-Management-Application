@@ -1,6 +1,7 @@
 import React from "react";
 import { getPatientDetails } from "@/lib/details";
-import { Details } from "@/types";
+import { getPatient } from "@/lib/patients";
+import { Details, Patient } from "@/types";
 import {
   Card,
   CardContent,
@@ -20,61 +21,66 @@ interface PageProps {
 }
 
 export default async function Page({ params }: PageProps) {
-  const response = await getPatientDetails(params.id);
+  const detailResponse = await getPatientDetails(params.id);
+  const patientResponse = await getPatient(params.id);
   const { id } = params;
 
-  if ("error" in response) {
-    return <div>Error: {JSON.stringify(response.error)}</div>;
+  if ("error" in detailResponse) {
+    return <div>Error: {JSON.stringify(detailResponse.error)}</div>;
   }
 
-  const { patientDetails } = response;
+  if ("error" in patientResponse) {
+    return <div>Error: {JSON.stringify(patientResponse.error)}</div>;
+  }
+
+  const { patientDetails } = detailResponse;
+  const { patient } = patientResponse;
+
   if (!patientDetails || !Array.isArray(patientDetails)) {
     return <div>No patient details available</div>;
   }
 
   return (
     <div>
-      <Card className="w-full max-w-3xl mx-auto">
+      <Card className="w-full max-w-3xl mx-auto bg-dark-blue text-white">
         <CardHeader>
           <CardTitle className="text-2xl">Patient Information</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <p className="text-sm font-medium text-gray-500">Name</p>
-              <p className="text-lg font-semibold">Sahad</p>
+              <p className="text-sm font-medium text-gray-300">Name</p>
+              <p className="text-lg font-semibold">{patient?.name}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500">Age</p>
-              <p className="text-lg font-semibold">50</p>
+              <p className="text-sm font-medium text-gray-300">Age</p>
+              <p className="text-lg font-semibold">{patient?.age}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500">Sex</p>
-              <p className="text-lg font-semibold">Male</p>
+              <p className="text-sm font-medium text-gray-300">Sex</p>
+              <p className="text-lg font-semibold">{patient?.sex}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500">Contact</p>
-              <p className="text-lg font-semibold">6363024288</p>
+              <p className="text-sm font-medium text-gray-300">Contact</p>
+              <p className="text-lg font-semibold">{patient?.contact}</p>
             </div>
           </div>
           <Separator className="my-6" />
 
-          <h3 className="text-xl font-semibold mb-4">Patient Details</h3>
+          {/* <h3 className="text-xl font-semibold mb-4">Patient Details</h3> */}
           <ScrollArea className="h-[400px] pr-4">
             {patientDetails && patientDetails.length > 0 ? (
               patientDetails.map((detail: Details) => (
-                <Card key={detail.id} className="mb-4">
+                <Card key={detail.id} className="mb-4 bg-dark-blue text-white">
                   <CardHeader>
-                    <CardTitle>
-                      <h3 className="text-xl font-semibold mb-4">
-                        Patient Details
-                      </h3>
+                    <CardTitle className="text-xl font-semibold mb-4">
+                      Patient Details
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <dl className="space-y-2">
                       <DetailItem
-                        label="Existing Disease"
+                        label="Chief Complaint"
                         value={detail.chiefComplaint}
                       />
                       <DetailItem
@@ -115,7 +121,7 @@ export default async function Page({ params }: PageProps) {
               ))
             ) : (
               <>
-                <h1>No Patients Details</h1>
+                <h1>No Patient Details</h1>
                 <CardFooter>
                   <AddDetails userId={id} />
                 </CardFooter>
@@ -137,8 +143,8 @@ function DetailItem({
 }) {
   return (
     <div>
-      <dt className="text-sm font-medium text-gray-500">{label}</dt>
-      <dd className="text-sm text-gray-900">{value || "N/A"}</dd>
+      <dt className="text-lg font-medium text-gray-400">{label}</dt>
+      <dd className="text-sm text-gray-100 mb-3">{value || "N/A"}</dd>
     </div>
   );
 }
