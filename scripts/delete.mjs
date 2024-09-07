@@ -1,5 +1,3 @@
-// scripts/delete.js
-
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -13,14 +11,24 @@ async function main() {
     },
   });
 
-  // Delete the fetched patients
+  // Delete related details and then patients
   for (const patient of patients) {
+    // Delete related Details records
+    await prisma.details.deleteMany({
+      where: {
+        patient: {
+          id: patient.id,
+        },
+      },
+    });
+
+    // Delete the patient record
     await prisma.patient.delete({
       where: { id: patient.id },
     });
   }
 
-  console.log('5 random patients deleted successfully!');
+  console.log('5 random patients and their related details deleted successfully!');
 }
 
 main()

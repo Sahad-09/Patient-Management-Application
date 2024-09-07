@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { updatePatientDetailAction } from "@/lib/actions"; // Ensure this is the correct import path
+import { updatePatientDetailAction } from "@/lib/actions";
 import {
   Sheet,
   SheetContent,
@@ -12,14 +12,14 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Details } from "@/types"; // Ensure this import is correct
+import { Details } from "@/types";
 
 interface EditDetailsProps {
   details: Details;
-  userId: string; // Add userId as a prop
+  userId: string;
 }
 
 const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
@@ -50,10 +50,9 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-
     try {
       await updatePatientDetailAction(
-        details.id, // Details ID
+        details.id,
         chiefComplaint,
         existingDisease,
         signAndSymptoms,
@@ -63,12 +62,11 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
         finalDiagnosis,
         treatmentPresented,
         followUp,
-        userId // User ID
+        userId
       );
       formRef.current?.reset();
     } catch (error) {
       console.error("Failed to update patient details:", error);
-      // Optionally, show a user-friendly message here
     }
   }
 
@@ -78,91 +76,109 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
         <SheetTrigger asChild>
           <Button>Edit Details</Button>
         </SheetTrigger>
-        <SheetContent className="sm:max-w-[425px]">
-          <SheetHeader>
+        <SheetContent className="sm:max-w-[425px] overflow-y-auto">
+          <SheetHeader className="mb-5">
             <SheetTitle>Edit Details</SheetTitle>
             <SheetDescription>
-              Edit patient details here. Click save when you&apos;re done.
+              Edit patient details here. Click save when you're done.
             </SheetDescription>
           </SheetHeader>
           <form
             ref={formRef}
             onSubmit={handleSubmit}
-            className="flex flex-col gap-5 mb-5"
+            className="flex flex-col gap-5 pb-10"
           >
-            <Label>Chief Complaint</Label>
-            <Input
-              value={chiefComplaint}
-              onChange={(e) => setChiefComplaint(e.target.value)}
-              className="text-white"
-              type="text"
-              placeholder="Chief Complaint"
-            />
-            <Label>Existing Disease</Label>
-            <Input
-              value={existingDisease}
-              onChange={(e) => setExistingDisease(e.target.value)}
-              className="text-white"
-              type="text"
-              placeholder="Existing Disease"
-            />
-            <Label>Signs and Symptoms</Label>
-            <Input
-              value={signAndSymptoms}
-              onChange={(e) => setSignAndSymptoms(e.target.value)}
-              className="text-white"
-              type="text"
-              placeholder="Signs and Symptoms"
-            />
-            <Label>Examination Details</Label>
-            <Input
-              value={examinationDetails}
-              onChange={(e) => setExaminationDetails(e.target.value)}
-              className="text-white"
-              type="text"
-              placeholder="Examination Details"
-            />
-            <Label>Lab Investigation</Label>
-            <Input
-              value={labInvestigation}
-              onChange={(e) => setLabInvestigation(e.target.value)}
-              className="text-white"
-              type="text"
-              placeholder="Lab Investigation"
-            />
-            <Label>X-rays or MRIs</Label>
-            <Input
-              value={xRaysOrMRs}
-              onChange={(e) => setXRaysOrMRs(e.target.value)}
-              className="text-white"
-              type="text"
-              placeholder="X-rays or MRIs"
-            />
-            <Label>Final Diagnosis</Label>
-            <Input
-              value={finalDiagnosis}
-              onChange={(e) => setFinalDiagnosis(e.target.value)}
-              className="text-white"
-              type="text"
-              placeholder="Final Diagnosis"
-            />
-            <Label>Treatment Presented</Label>
-            <Input
-              value={treatmentPresented}
-              onChange={(e) => setTreatmentPresented(e.target.value)}
-              className="text-white"
-              type="text"
-              placeholder="Treatment Presented"
-            />
-            <Label>Follow Up</Label>
-            <Input
-              value={followUp}
-              onChange={(e) => setFollowUp(e.target.value)}
-              className="text-white"
-              type="text"
-              placeholder="Follow Up"
-            />
-            <SheetFooter>
+            <div className="space-y-2">
+              <Label htmlFor="chiefComplaint">Chief Complaint</Label>
+              <Textarea
+                id="chiefComplaint"
+                value={chiefComplaint}
+                onChange={(e) => setChiefComplaint(e.target.value)}
+                className="text-white"
+                placeholder="Chief Complaint"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="existingDisease">Existing Disease</Label>
+              <Textarea
+                id="existingDisease"
+                value={existingDisease}
+                onChange={(e) => setExistingDisease(e.target.value)}
+                className="text-white"
+                placeholder="Existing Disease"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="signAndSymptoms">Signs and Symptoms</Label>
+              <Textarea
+                id="signAndSymptoms"
+                value={signAndSymptoms}
+                onChange={(e) => setSignAndSymptoms(e.target.value)}
+                className="text-white"
+                placeholder="Signs and Symptoms"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="examinationDetails">Examination Details</Label>
+              <Textarea
+                id="examinationDetails"
+                value={examinationDetails}
+                onChange={(e) => setExaminationDetails(e.target.value)}
+                className="text-white"
+                placeholder="Examination Details"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="labInvestigation">Lab Investigation</Label>
+              <Textarea
+                id="labInvestigation"
+                value={labInvestigation}
+                onChange={(e) => setLabInvestigation(e.target.value)}
+                className="text-white"
+                placeholder="Lab Investigation"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="xRaysOrMRs">X-rays or MRIs</Label>
+              <Textarea
+                id="xRaysOrMRs"
+                value={xRaysOrMRs}
+                onChange={(e) => setXRaysOrMRs(e.target.value)}
+                className="text-white"
+                placeholder="X-rays or MRIs"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="finalDiagnosis">Final Diagnosis</Label>
+              <Textarea
+                id="finalDiagnosis"
+                value={finalDiagnosis}
+                onChange={(e) => setFinalDiagnosis(e.target.value)}
+                className="text-white"
+                placeholder="Final Diagnosis"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="treatmentPresented">Treatment Presented</Label>
+              <Textarea
+                id="treatmentPresented"
+                value={treatmentPresented}
+                onChange={(e) => setTreatmentPresented(e.target.value)}
+                className="text-white"
+                placeholder="Treatment Presented"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="followUp">Follow Up</Label>
+              <Textarea
+                id="followUp"
+                value={followUp}
+                onChange={(e) => setFollowUp(e.target.value)}
+                className="text-white"
+                placeholder="Follow Up"
+              />
+            </div>
+            <SheetFooter className="mt-5">
               <SheetClose asChild>
                 <Button type="submit">Save Changes</Button>
               </SheetClose>

@@ -19,6 +19,10 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         addPatient: "bg-[#32CD32] text-black hover:bg-palegreen/90", // Add Patient variant
+        transparentTop:
+          "bg-transparent text-primary text-center w-full border-t border-primary hover:bg-primary/10 hover:text-primary-dark", // Transparent with top border and hover effect
+        transparentBottom:
+          "bg-transparent text-primary text-center w-full border-b border-primary hover:bg-primary/10 hover:text-primary-dark", // Transparent with bottom border and hover effect
       },
 
       size: {

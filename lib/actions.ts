@@ -19,7 +19,6 @@ export async function deletePatientAction(id: string) {
   revalidatePath('/patients');
 }
 
-
 export async function updatePatientAction(
   id: string,
   name: string,
@@ -60,10 +59,10 @@ export async function createPatientDetailAction(
   revalidatePath(`/patients/${userId}`); // Revalidate after adding patient detail
 }
 
-export async function deletePatientDetailAction(id: string, userId: string) {
-  await deletePatientDetail(id);
-  revalidatePath(`/patients/${userId}`); // Revalidate after deleting patient detail
-}
+// export async function deletePatientDetailAction(id: string, userId: string) {
+//   await deletePatientDetail(id);
+//   revalidatePath(`/patients/${userId}`); // Revalidate after deleting patient detail
+// }
 
 export async function updatePatientDetailAction(
   id: string,

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Patient } from "@/types";
 import { deletePatientAction } from "@/lib/actions";
+import { DropdownMenuItem } from "../ui/dropdown-menu";
 
 interface DeletePatientProps {
   patient: Patient;
@@ -14,7 +15,7 @@ const DeletePatient: React.FC<DeletePatientProps> = ({ patient }) => {
 
   return (
     <div>
-      <Button variant="destructive" onClick={() => handleDelete(patient.id)}>
+      <Button variant="transparentTop" onClick={() => handleDelete(patient.id)}>
         Delete
       </Button>
     </div>

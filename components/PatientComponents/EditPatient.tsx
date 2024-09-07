@@ -28,17 +28,40 @@ const EditPatient: React.FC<EditPatientProps> = ({ patient }) => {
   const [contact, setContact] = useState(patient.contact);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Function to simulate a click event at a random position on the screen
+  function triggerRandomClick() {
+    const x = Math.random() * window.innerWidth;
+
+    const y = Math.random() * window.innerHeight; // Adjusted to consider full height
+    console.log("xxxxxx", x);
+    console.log("yyyyyy", y);
+
+    const clickEvent = new MouseEvent("click", {
+      clientX: x,
+      clientY: y,
+      bubbles: true,
+      cancelable: true,
+    });
+
+    document.dispatchEvent(clickEvent);
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     await updatePatientAction(patient.id, name, age, sex, contact);
     formRef.current?.reset();
+
+    // Trigger the random click after a 1-second delay
+    setTimeout(() => {
+      triggerRandomClick();
+    }, 1000);
   }
 
   return (
     <div>
       <Sheet>
         <SheetTrigger asChild>
-          <Button>Edit</Button>
+          <Button variant="transparentBottom">Edit</Button>
         </SheetTrigger>
         <SheetContent className="sm:max-w-[425px]">
           <SheetHeader>

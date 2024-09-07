@@ -1,5 +1,3 @@
-// scripts/seed.js
-
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
@@ -37,9 +35,12 @@ async function main() {
     userId: patient.id, // Use the patient's id as userId
   }));
 
-  await prisma.details.createMany({
-    data: detailsData,
-  });
+  // Insert details for each patient
+  for (const details of detailsData) {
+    await prisma.details.create({
+      data: details,
+    });
+  }
 
   console.log('Details inserted successfully!');
 }

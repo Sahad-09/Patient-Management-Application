@@ -5,7 +5,7 @@ import { NewPatientForm } from "@/components/PatientComponents/NewPatientForm";
 
 const page = async () => {
   const { patients } = await getPatients();
-  console.log(patients);
+  // console.log(patients);
 
   return (
     <div>
