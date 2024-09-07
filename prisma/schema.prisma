@@ -20,6 +20,20 @@ model Patient {
   sex      String
   contact  String
   dateTime DateTime @default(now())
+  Details  Details?
 }
 
-
+model Details {
+  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+  chiefComplaint     String?
+  existingDisease    String?
+  signAndSymptoms    String?
+  examinationDetails String?
+  labInvestigation   String?
+  xRaysOrMRs         String?
+  finalDiagnosis     String?
+  treatmentPresented String?
+  followUp           String?
+  userId             String  @unique @db.ObjectId
+  patient            Patient @relation(fields: [userId], references: [id])
+}

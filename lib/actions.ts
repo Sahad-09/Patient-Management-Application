@@ -1,9 +1,8 @@
 'use server'
 
 import { revalidatePath } from "next/cache";
-import { createPatient } from "./patients";
-import { deletePatient } from "./patients";
-import { updatePatient } from "./patients";
+import { createPatient, deletePatient, updatePatient } from "./patients";
+import { createPatientDetail, deletePatientDetail, updatePatientDetail } from "./details";
 
 export async function createPatientAction(
   name: string, 
@@ -32,45 +31,64 @@ export async function updatePatientAction(
   revalidatePath('/patients');
 }
 
+// Add the following for Details actions:
 
+export async function createPatientDetailAction(
+  chiefComplaint: string,
+  existingDisease: string,
+  signAndSymptoms: string,
+  examinationDetails: string,
+  labInvestigation: string,
+  xRaysOrMRs: string,
+  finalDiagnosis: string,
+  treatmentPresented: string,
+  followUp: string,
+  userId: string
+) {
+  await createPatientDetail(
+    chiefComplaint,
+    existingDisease,
+    signAndSymptoms,
+    examinationDetails,
+    labInvestigation,
+    xRaysOrMRs,
+    finalDiagnosis,
+    treatmentPresented,
+    followUp,
+    userId
+  );
+  revalidatePath(`/patients/${userId}`); // Revalidate after adding patient detail
+}
 
+export async function deletePatientDetailAction(id: string, userId: string) {
+  await deletePatientDetail(id);
+  revalidatePath(`/patients/${userId}`); // Revalidate after deleting patient detail
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { revalidatePath, revalidateTag } from 'next/cache'
-// import { redirect } from 'next/navigation'
-
-// export async function revalidatePatients() {
-//   revalidateTag('patients')
-//   redirect('/')
-// }
-
-// export async function revalidateTodos() {
-//   revalidateTag('todos')
-//   redirect('/')
-// }
-
-// export async function revalidateAll() {
-//   revalidatePath('/')
-//   redirect('/')
-// }
+export async function updatePatientDetailAction(
+  id: string,
+  chiefComplaint: string,
+  existingDisease: string,
+  signAndSymptoms: string,
+  examinationDetails: string,
+  labInvestigation: string,
+  xRaysOrMRs: string,
+  finalDiagnosis: string,
+  treatmentPresented: string,
+  followUp: string,
+  userId: string
+) {
+  await updatePatientDetail(
+    id,
+    chiefComplaint,
+    existingDisease,
+    signAndSymptoms,
+    examinationDetails,
+    labInvestigation,
+    xRaysOrMRs,
+    finalDiagnosis,
+    treatmentPresented,
+    followUp
+  );
+  revalidatePath(`/patients/${userId}`); // Revalidate after updating patient detail
+}

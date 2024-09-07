@@ -14,6 +14,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation"; // Use next/navigation for the App Router
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,8 +47,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DeletePatient from "@/components/DeletePatient"; // named import here
-import EditPatient from "@/components/EditPatient"; // named import here
+import DeletePatient from "@/components/PatientComponents/DeletePatient"; // named import here
+import EditPatient from "@/components/PatientComponents/EditPatient"; // named import here
 
 // DateTimeCell component for client-side date formatting
 const DateTimeCell: React.FC<{ dateTime: string }> = ({ dateTime }) => {
@@ -134,9 +136,7 @@ export const columns: ColumnDef<Patient>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <Dialog>
-              <EditPatient patient={patient} />
-            </Dialog>
+            <EditPatient patient={patient} />
             <DeletePatient patient={patient} />
           </DropdownMenuContent>
         </DropdownMenu>
@@ -146,6 +146,7 @@ export const columns: ColumnDef<Patient>[] = [
 ];
 
 // Update Tablee component to accept patients as a prop
+
 export function Tablee({ patients }: { patients: Patient[] | undefined }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -154,6 +155,8 @@ export function Tablee({ patients }: { patients: Patient[] | undefined }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const router = useRouter(); // Correct hook for app directory
 
   // Set up table data and column configurations
   const table = useReactTable({
@@ -242,9 +245,21 @@ export function Tablee({ patients }: { patients: Patient[] | undefined }) {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                      {cell.column.id === "name" ? (
+                        // Only wrap the patient's name in the Link component
+                        <Link href={`/patients/${row.original.id}`}>
+                          <span className="cursor-pointer text-[#00F7F7] hover:underline">
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </span>
+                        </Link>
+                      ) : (
+                        flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )
                       )}
                     </TableCell>
                   ))}
