@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import EditDetails from "@/components/DetailsComponents/EditDetails";
+import AddDetails from "@/components/DetailsComponents/AddDetails";
 import { Separator } from "@/components/ui/separator";
 
 interface PageProps {
@@ -60,51 +61,66 @@ export default async function Page({ params }: PageProps) {
 
           <h3 className="text-xl font-semibold mb-4">Patient Details</h3>
           <ScrollArea className="h-[400px] pr-4">
-            {patientDetails.map((detail: Details) => (
-              <Card key={detail.id} className="mb-4">
-                <CardHeader>
-                  <CardTitle>
-                    {detail.chiefComplaint || "No Chief Complaint"}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <dl className="space-y-2">
-                    <DetailItem
-                      label="Existing Disease"
-                      value={detail.existingDisease}
-                    />
-                    <DetailItem
-                      label="Signs and Symptoms"
-                      value={detail.signAndSymptoms}
-                    />
-                    <DetailItem
-                      label="Examination Details"
-                      value={detail.examinationDetails}
-                    />
-                    <DetailItem
-                      label="Lab Investigation"
-                      value={detail.labInvestigation}
-                    />
-                    <DetailItem
-                      label="X-rays or MRIs"
-                      value={detail.xRaysOrMRs}
-                    />
-                    <DetailItem
-                      label="Final Diagnosis"
-                      value={detail.finalDiagnosis}
-                    />
-                    <DetailItem
-                      label="Treatment Presented"
-                      value={detail.treatmentPresented}
-                    />
-                    <DetailItem label="Follow-up" value={detail.followUp} />
-                  </dl>
-                </CardContent>
+            {patientDetails && patientDetails.length > 0 ? (
+              patientDetails.map((detail: Details) => (
+                <Card key={detail.id} className="mb-4">
+                  <CardHeader>
+                    <CardTitle>
+                      <h3 className="text-xl font-semibold mb-4">
+                        Patient Details
+                      </h3>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <dl className="space-y-2">
+                      <DetailItem
+                        label="Existing Disease"
+                        value={detail.chiefComplaint}
+                      />
+                      <DetailItem
+                        label="Existing Disease"
+                        value={detail.existingDisease}
+                      />
+                      <DetailItem
+                        label="Signs and Symptoms"
+                        value={detail.signAndSymptoms}
+                      />
+                      <DetailItem
+                        label="Examination Details"
+                        value={detail.examinationDetails}
+                      />
+                      <DetailItem
+                        label="Lab Investigation"
+                        value={detail.labInvestigation}
+                      />
+                      <DetailItem
+                        label="X-rays or MRIs"
+                        value={detail.xRaysOrMRs}
+                      />
+                      <DetailItem
+                        label="Final Diagnosis"
+                        value={detail.finalDiagnosis}
+                      />
+                      <DetailItem
+                        label="Treatment Presented"
+                        value={detail.treatmentPresented}
+                      />
+                      <DetailItem label="Follow-up" value={detail.followUp} />
+                    </dl>
+                  </CardContent>
+                  <CardFooter>
+                    <EditDetails details={detail} userId={id} />
+                  </CardFooter>
+                </Card>
+              ))
+            ) : (
+              <>
+                <h1>No Patients Details</h1>
                 <CardFooter>
-                  <EditDetails details={detail} userId={id} />
+                  <AddDetails userId={id} />
                 </CardFooter>
-              </Card>
-            ))}
+              </>
+            )}
           </ScrollArea>
         </CardContent>
       </Card>
