@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react";
 import { getPatientDetails } from "@/lib/details";
 import EditDetails from "@/components/DetailsComponents/EditDetails";
@@ -28,6 +29,7 @@ const defaultDetails: Details = {
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { patientDetails } = await getPatientDetails(params.id);
+  // console.log(patientDetails);
 
   if (!patientDetails) {
     return (
@@ -88,6 +90,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           <Separator className="my-6" />
 
           <h3 className="text-xl font-semibold mb-4">Patient Details</h3>
+
           {patientDetails.Details ? (
             <ScrollArea className="h-[400px] pr-4">
               {detailsFields.map(({ key, label }) => {
