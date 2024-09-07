@@ -11,7 +11,7 @@ export interface Details {
   finalDiagnosis: string | null;
   treatmentPresented: string | null;
   followUp: string | null;
-  userId: string | null;
+  // userId: string | null;
 }
 
 export interface Patient {

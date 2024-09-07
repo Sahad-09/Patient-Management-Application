@@ -20,7 +20,7 @@ model Patient {
   sex      String
   contact  String
   dateTime DateTime @default(now())
-  details  Details? @relation("PatientDetails") // No onDelete here
+  Details  Details?
 }
 
 model Details {
@@ -34,6 +34,6 @@ model Details {
   finalDiagnosis     String?
   treatmentPresented String?
   followUp           String?
-  patientId          String  @unique @db.ObjectId
-  patient            Patient @relation("PatientDetails", fields: [patientId], references: [id], onDelete: Cascade) // onDelete here
+  userId             String  @unique @db.ObjectId
+  patient            Patient @relation(fields: [userId], references: [id])
 }
