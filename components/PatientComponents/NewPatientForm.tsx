@@ -15,6 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 
 // Define the Zod schema for validation
@@ -129,12 +136,15 @@ export function NewPatientForm() {
           {formErrors.age && <p className="text-red-500">{formErrors.age}</p>}
 
           <Label>Sex</Label>
-          <Input
-            className="text-white"
-            type="text"
-            name="sex"
-            placeholder="male or female"
-          />
+          <Select name="sex">
+            <SelectTrigger className="bg-gray-800 text-white">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="male">Male</SelectItem>
+              <SelectItem value="female">Female</SelectItem>
+            </SelectContent>
+          </Select>
           {formErrors.sex && <p className="text-red-500">{formErrors.sex}</p>}
 
           <Label>Contact</Label>

@@ -43,6 +43,7 @@ import DeletePatient from "@/components/PatientComponents/DeletePatient";
 import EditPatient from "@/components/PatientComponents/EditPatient";
 import DeletePatients from "@/components/PatientComponents/DeletePatients";
 import { useState, useEffect, useCallback } from "react";
+import ActionsDropdown from "./ActionsDropdown";
 
 const DateTimeCell: React.FC<{ dateTime: string }> = ({ dateTime }) => {
   const [formattedDate, setFormattedDate] = React.useState<string>("");
@@ -77,93 +78,70 @@ export function Tablee({ patients }: TableProps) {
     });
   }, [patients]);
 
-  const columns = React.useMemo<ColumnDef<Patient>[]>(
-    () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
+  const columns: ColumnDef<Patient>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Name
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
       },
-      {
-        accessorKey: "name",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Name
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
-          );
-        },
-        cell: ({ row }) => <div>{row.getValue("name")}</div>,
-      },
-      {
-        accessorKey: "age",
-        header: "Age",
-        cell: ({ row }) => <div>{row.getValue("age")}</div>,
-      },
-      {
-        accessorKey: "sex",
-        header: "Sex",
-        cell: ({ row }) => <div>{row.getValue("sex")}</div>,
-      },
-      {
-        accessorKey: "contact",
-        header: "Contact",
-        cell: ({ row }) => <div>{row.getValue("contact")}</div>,
-      },
-      {
-        accessorKey: "dateTime",
-        header: "Date & Time",
-        cell: ({ row }) => <DateTimeCell dateTime={row.getValue("dateTime")} />,
-      },
-      {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-          const patient = row.original;
-          return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <EditPatient patient={patient} onClose={() => {}} />
-                <DeletePatient patient={patient} onClose={() => {}} />
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
-        },
-      },
-    ],
-    []
-  );
+      cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    },
+    {
+      accessorKey: "age",
+      header: "Age",
+      cell: ({ row }) => <div>{row.getValue("age")}</div>,
+    },
+    {
+      accessorKey: "sex",
+      header: "Sex",
+      cell: ({ row }) => <div>{row.getValue("sex")}</div>,
+    },
+    {
+      accessorKey: "contact",
+      header: "Contact",
+      cell: ({ row }) => <div>{row.getValue("contact")}</div>,
+    },
+    {
+      accessorKey: "dateTime",
+      header: "Date & Time",
+      cell: ({ row }) => <DateTimeCell dateTime={row.getValue("dateTime")} />,
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => <ActionsDropdown patient={row.original} />,
+    },
+  ];
 
   const table = useReactTable({
     data: sortedPatients,
