@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import AddDetails from "@/components/DetailsComponents/AddDetails";
+import EditDetails from "@/components/DetailsComponents/EditDetails";
 
 interface PageProps {
   params: {
@@ -115,32 +117,19 @@ export default async function Page({ params }: PageProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="details">Patient Details</TabsTrigger>
-              <TabsTrigger value="history">Medical History</TabsTrigger>
-            </TabsList>
-            <TabsContent value="details">
-              <ScrollArea className="h-[500px] pr-4 mt-4">
-                {validPatientDetails.length > 0 ? (
-                  validPatientDetails.map((detail) => (
-                    <PatientDetailCard
-                      key={detail.id}
-                      detail={detail}
-                      userId={id}
-                    />
-                  ))
-                ) : (
-                  <NoPatientDetails userId={id} />
-                )}
-              </ScrollArea>
-            </TabsContent>
-            <TabsContent value="history">
-              <div className="p-4 text-center text-gray-500">
-                Medical history not available
-              </div>
-            </TabsContent>
-          </Tabs>
+          <ScrollArea className="h-[500px] pr-4 mt-4">
+            {validPatientDetails.length > 0 ? (
+              validPatientDetails.map((detail) => (
+                <PatientDetailCard
+                  key={detail.id}
+                  detail={detail}
+                  userId={id}
+                />
+              ))
+            ) : (
+              <NoPatientDetails userId={id} />
+            )}
+          </ScrollArea>
         </CardContent>
       </Card>
     </div>
@@ -220,24 +209,4 @@ function NoPatientDetails({ userId }: { userId: string }) {
       </CardContent>
     </Card>
   );
-}
-
-// Placeholder components for EditDetails and AddDetails
-// Replace these with your actual implementations
-function EditDetails({
-  details,
-  userId,
-}: {
-  details: Details;
-  userId: string;
-}) {
-  return (
-    <Button variant="outline" className="text-lg">
-      Edit Details
-    </Button>
-  );
-}
-
-function AddDetails({ userId }: { userId: string }) {
-  return <Button className="text-lg">Add Details</Button>;
 }
