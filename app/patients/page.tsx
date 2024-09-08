@@ -1,5 +1,5 @@
 import React from "react";
-import { Tablee } from "./Tablee";
+import { Tablee } from "../../components/Table/Tablee";
 import { getPatients } from "@/lib/patients";
 
 const page = async () => {

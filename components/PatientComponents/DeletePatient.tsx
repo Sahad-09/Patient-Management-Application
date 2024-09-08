@@ -37,7 +37,9 @@ const DeletePatient: React.FC<DeletePatientProps> = ({ patient, onClose }) => {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Are you sure you want to delete {patient.name} ?
+          </AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete the
             patient and remove their data from our records.
