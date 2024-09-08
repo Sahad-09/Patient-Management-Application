@@ -115,7 +115,7 @@ export function NewPatientForm() {
             className="text-white"
             type="text"
             name="name"
-            placeholder="Name"
+            placeholder="Pavel Durov"
           />
           {formErrors.name && <p className="text-red-500">{formErrors.name}</p>}
 
@@ -124,7 +124,7 @@ export function NewPatientForm() {
             className="text-white"
             type="text"
             name="age"
-            placeholder="Age"
+            placeholder="30"
           />
           {formErrors.age && <p className="text-red-500">{formErrors.age}</p>}
 
@@ -133,7 +133,7 @@ export function NewPatientForm() {
             className="text-white"
             type="text"
             name="sex"
-            placeholder="Sex"
+            placeholder="male or female"
           />
           {formErrors.sex && <p className="text-red-500">{formErrors.sex}</p>}
 
@@ -142,7 +142,7 @@ export function NewPatientForm() {
             className="text-white"
             type="text"
             name="contact"
-            placeholder="Contact"
+            placeholder="6363024288"
           />
           {formErrors.contact && (
             <p className="text-red-500">{formErrors.contact}</p>
