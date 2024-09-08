@@ -19,7 +19,7 @@ import Link from "next/link";
 import { NewPatientForm } from "@/components/PatientComponents/NewPatientForm";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Patient } from "@/types";
+import { Patient, Details } from "@/types";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -202,7 +202,7 @@ export function Tablee({ patients }: TableProps) {
             placeholder="Search by name or contact..."
             value={globalFilter ?? ""}
             onChange={(event) => setGlobalFilter(event.target.value)}
-            className="h-8 w-[150px] lg:w-[250px]"
+            className="h-8 w-[150px] lg:w-[300px] py-5"
           />
           {isFiltered && (
             <Button

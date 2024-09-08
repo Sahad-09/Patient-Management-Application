@@ -158,7 +158,7 @@ export function NewPatientForm() {
             <p className="text-red-500">{formErrors.contact}</p>
           )}
 
-          <Button type="submit" variant="default">
+          <Button type="submit" variant="addPatient">
             Add Patient
           </Button>
         </form>

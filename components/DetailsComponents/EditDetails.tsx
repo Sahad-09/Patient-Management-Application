@@ -15,6 +15,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Details } from "@/types";
 
 interface EditDetailsProps {
@@ -46,22 +47,54 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
     details.treatmentPresented || ""
   );
   const [followUp, setFollowUp] = useState(details.followUp || "");
+
+  // State for managing dynamic fields
+  const [dynamicFields, setDynamicFields] = useState<
+    { label: string; value: string }[]
+  >(
+    details.dynamicFields || [] // Initialize with existing dynamic fields
+  );
+
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Handler for adding a new dynamic field
+  const handleAddField = () => {
+    setDynamicFields([...dynamicFields, { label: "", value: "" }]);
+  };
+
+  // Handler for removing a dynamic field
+  const handleRemoveField = (index: number) => {
+    setDynamicFields(dynamicFields.filter((_, i) => i !== index));
+  };
+
+  // Handler for updating dynamic fields
+  const handleFieldChange = (
+    index: number,
+    key: "label" | "value",
+    value: string
+  ) => {
+    const updatedFields = [...dynamicFields];
+    updatedFields[index][key] = value;
+    setDynamicFields(updatedFields);
+  };
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     try {
       await updatePatientDetailAction(
         details.id,
-        chiefComplaint,
-        existingDisease,
-        signAndSymptoms,
-        examinationDetails,
-        labInvestigation,
-        xRaysOrMRs,
-        finalDiagnosis,
-        treatmentPresented,
-        followUp,
+        {
+          chiefComplaint,
+          existingDisease,
+          signAndSymptoms,
+          examinationDetails,
+          labInvestigation,
+          xRaysOrMRs,
+          finalDiagnosis,
+          treatmentPresented,
+          followUp,
+          dynamicFields, // Include dynamic fields
+        },
         userId
       );
       formRef.current?.reset();
@@ -178,9 +211,51 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
                 placeholder="Follow Up"
               />
             </div>
+
+            {/* Dynamic fields */}
+            <div className="space-y-2 mt-4 flex flex-col">
+              <Label>Dynamic Fields</Label>
+              {dynamicFields.map((field, index) => (
+                <div key={index} className="space-y-2 mt-2">
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type="text"
+                      placeholder="Label"
+                      value={field.label}
+                      onChange={(e) =>
+                        handleFieldChange(index, "label", e.target.value)
+                      }
+                      className="text-white flex-grow"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => handleRemoveField(index)}
+                      className="px-2 py-1 h-auto"
+                    >
+                      X
+                    </Button>
+                  </div>
+                  <Textarea
+                    placeholder="Value"
+                    value={field.value}
+                    onChange={(e) =>
+                      handleFieldChange(index, "value", e.target.value)
+                    }
+                    className="text-white mt-1"
+                  />
+                </div>
+              ))}
+              <Button type="button" onClick={handleAddField} className="mt-2">
+                Add Dynamic Field
+              </Button>
+            </div>
+
             <SheetFooter className="mt-5">
               <SheetClose asChild>
-                <Button type="submit">Save Changes</Button>
+                <Button variant="addPatient" type="submit">
+                  Save Changes
+                </Button>
               </SheetClose>
             </SheetFooter>
           </form>

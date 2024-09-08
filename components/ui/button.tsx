@@ -20,9 +20,9 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         addPatient: "bg-[#32CD32] text-black hover:bg-palegreen/90", // Add Patient variant
         transparentTop:
-          "bg-destructive  text-primary text-center w-full border-t border-primary hover:bg-primary/10 hover:text-primary-dark", // Transparent with top border and hover effect
+          "bg-destructive mt-1  text-primary text-center w-full hover:bg-primary/10 hover:text-primary-dark", // Transparent with top border and hover effect
         transparentBottom:
-          "bg-primary text-primary-foreground text-center w-full border-b border-primary hover:bg-primary/10 hover:text-primary-dark", // Transparent with bottom border and hover effect
+          "bg-primary text-primary-foreground text-center w-full hover:bg-primary/10 hover:text-primary-dark", // Transparent with bottom border and hover effect
       },
 
       size: {

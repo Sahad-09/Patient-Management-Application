@@ -1,24 +1,9 @@
 import prisma from './prismadb'
 
-
-// export async function getPatientDetails(id: string) {
-//   try {
-//     const patientDetails = await prisma.patient.findUnique({
-//       where: { id },
-//       include: { Details: true },  // Include the related Details model
-//     });
-//     return { patientDetails };
-//   } catch (error) {
-//     return { error };
-//   }
-// }
-
-
 export async function getPatientDetails(id: string) {
   try {
-    // Fetch the details directly from the Details model based on the patient ID
     const patientDetails = await prisma.details.findMany({
-      where: { userId: id }, // Assuming userId is the foreign key linking Details to Patient
+      where: { userId: id },
     });
 
     return { patientDetails };
@@ -27,8 +12,8 @@ export async function getPatientDetails(id: string) {
   }
 }
 
-
-  export async function createPatientDetail(
+export async function createPatientDetail(
+  details: {
     chiefComplaint: string,
     existingDisease: string,
     signAndSymptoms: string,
@@ -38,42 +23,36 @@ export async function getPatientDetails(id: string) {
     finalDiagnosis: string,
     treatmentPresented: string,
     followUp: string,
-    userId: string
-  ) {
-    try {
-      const details = await prisma.details.create({
-        data: {
-          chiefComplaint,
-          existingDisease,
-          signAndSymptoms,
-          examinationDetails,
-          labInvestigation,
-          xRaysOrMRs,
-          finalDiagnosis,
-          treatmentPresented,
-          followUp,
-          userId,
-        },
-      });
-      return { details };
-    } catch (error) {
-      return { error };
-    }
+  },
+  userId: string
+) {
+  try {
+    const detail = await prisma.details.create({
+      data: {
+        ...details,
+        userId,
+      },
+    });
+    return { detail };
+  } catch (error) {
+    return { error };
   }
-  
-  export async function deletePatientDetail(id: string) {
-    try {
-      const details = await prisma.details.delete({
-        where: { id },
-      });
-      return { details };
-    } catch (error) {
-      return { error };
-    }
+}
+
+export async function deletePatientDetail(id: string) {
+  try {
+    const detail = await prisma.details.delete({
+      where: { id },
+    });
+    return { detail };
+  } catch (error) {
+    return { error };
   }
-  
-  export async function updatePatientDetail(
-    id: string,
+}
+
+export async function updatePatientDetail(
+  id: string,
+  details: {
     chiefComplaint: string,
     existingDisease: string,
     signAndSymptoms: string,
@@ -82,25 +61,18 @@ export async function getPatientDetails(id: string) {
     xRaysOrMRs: string,
     finalDiagnosis: string,
     treatmentPresented: string,
-    followUp: string
-  ) {
-    try {
-      const details = await prisma.details.update({
-        where: { id },
-        data: {
-          chiefComplaint,
-          existingDisease,
-          signAndSymptoms,
-          examinationDetails,
-          labInvestigation,
-          xRaysOrMRs,
-          finalDiagnosis,
-          treatmentPresented,
-          followUp,
-        },
-      });
-      return { details };
-    } catch (error) {
-      return { error };
-    }
+    followUp: string,
   }
+) {
+  try {
+    const updatedDetail = await prisma.details.update({
+      where: { id },
+      data: {
+        ...details,
+      },
+    });
+    return { updatedDetail };
+  } catch (error) {
+    return { error };
+  }
+}

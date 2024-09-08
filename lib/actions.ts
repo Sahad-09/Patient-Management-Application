@@ -1,24 +1,41 @@
-'use server'
+"use server"
 
 import { revalidatePath } from "next/cache";
 import { createPatient, deletePatient, updatePatient, deletePatients } from "./patients";
 import { createPatientDetail, deletePatientDetail, updatePatientDetail } from "./details";
 
+// Define a type for PatientDetail with dynamicFields
+interface PatientDetail {
+  chiefComplaint: string;
+  existingDisease: string;
+  signAndSymptoms: string;
+  examinationDetails: string;
+  labInvestigation: string;
+  xRaysOrMRs: string;
+  finalDiagnosis: string;
+  treatmentPresented: string;
+  followUp: string;
+  dynamicFields?: Array<{ label: string; value: string }>; // Added dynamicFields
+}
+
+// Create Patient Action
 export async function createPatientAction(
-  name: string, 
-  age: string, 
-  sex: string, 
+  name: string,
+  age: string,
+  sex: string,
   contact: string
 ) {
   await createPatient(name, age, sex, contact);
   revalidatePath('/patients');
 }
 
+// Delete Patient Action
 export async function deletePatientAction(id: string) {
   await deletePatient(id);
   revalidatePath('/patients');
 }
 
+// Update Patient Action
 export async function updatePatientAction(
   id: string,
   name: string,
@@ -30,69 +47,33 @@ export async function updatePatientAction(
   revalidatePath('/patients');
 }
 
+// Delete Multiple Patients Action
 export async function deletePatientsAction(ids: string[]) {
   await deletePatients(ids);
-  revalidatePath('/patients'); // Revalidate after deleting multiple patients
+  revalidatePath('/patients');
 }
 
-// Add the following for Details actions:
-
+// Create Patient Detail Action
 export async function createPatientDetailAction(
-  chiefComplaint: string,
-  existingDisease: string,
-  signAndSymptoms: string,
-  examinationDetails: string,
-  labInvestigation: string,
-  xRaysOrMRs: string,
-  finalDiagnosis: string,
-  treatmentPresented: string,
-  followUp: string,
+  details: PatientDetail,
   userId: string
 ) {
-  await createPatientDetail(
-    chiefComplaint,
-    existingDisease,
-    signAndSymptoms,
-    examinationDetails,
-    labInvestigation,
-    xRaysOrMRs,
-    finalDiagnosis,
-    treatmentPresented,
-    followUp,
-    userId
-  );
-  revalidatePath(`/patients/${userId}`); // Revalidate after adding patient detail
+  await createPatientDetail(details, userId);
+  revalidatePath(`/patients/${userId}`);
 }
 
-// export async function deletePatientDetailAction(id: string, userId: string) {
-//   await deletePatientDetail(id);
-//   revalidatePath(`/patients/${userId}`); // Revalidate after deleting patient detail
-// }
+// Delete Patient Detail Action
+export async function deletePatientDetailAction(id: string, userId: string) {
+  await deletePatientDetail(id);
+  revalidatePath(`/patients/${userId}`);
+}
 
+// Update Patient Detail Action
 export async function updatePatientDetailAction(
   id: string,
-  chiefComplaint: string,
-  existingDisease: string,
-  signAndSymptoms: string,
-  examinationDetails: string,
-  labInvestigation: string,
-  xRaysOrMRs: string,
-  finalDiagnosis: string,
-  treatmentPresented: string,
-  followUp: string,
+  details: PatientDetail,
   userId: string
 ) {
-  await updatePatientDetail(
-    id,
-    chiefComplaint,
-    existingDisease,
-    signAndSymptoms,
-    examinationDetails,
-    labInvestigation,
-    xRaysOrMRs,
-    finalDiagnosis,
-    treatmentPresented,
-    followUp
-  );
-  revalidatePath(`/patients/${userId}`); // Revalidate after updating patient detail
+  await updatePatientDetail(id, details);
+  revalidatePath(`/patients/${userId}`);
 }

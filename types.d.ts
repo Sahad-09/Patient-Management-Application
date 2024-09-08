@@ -1,5 +1,7 @@
 // types.d.ts
 
+// type DynamicField = { label: string; value: string };
+
 export interface Details {
   id: string;
   chiefComplaint: string | null;
@@ -11,8 +13,10 @@ export interface Details {
   finalDiagnosis: string | null;
   treatmentPresented: string | null;
   followUp: string | null;
-  // userId: string | null;
+  dynamicFields?: Array<{ label: string; value: string }> | null | undefined; // Adjusted to allow null
+  // dynamicFields: DynamicField[] | null | undefined;
 }
+
 
 export interface Patient {
   id: string;
@@ -21,7 +25,7 @@ export interface Patient {
   sex: string;
   contact: string;
   dateTime: Date;
-  Details?: Details; // Changed from PatientDetails to Details
+  // Details?: Details; // Changed from PatientDetails to Details
 }
 
 export interface GetPatientDetailsResponse {

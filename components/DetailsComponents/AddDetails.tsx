@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { createPatientDetailAction } from "@/lib/actions"; // Assuming this action exists
+import { createPatientDetailAction } from "@/lib/actions";
 import {
   Sheet,
   SheetContent,
@@ -15,10 +15,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"; // Assuming you have an Input component
 
 interface AddDetailsProps {
   userId: string;
-  // patientId: string;
 }
 
 const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
@@ -31,25 +31,54 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
   const [finalDiagnosis, setFinalDiagnosis] = useState("");
   const [treatmentPresented, setTreatmentPresented] = useState("");
   const [followUp, setFollowUp] = useState("");
+
+  // State for managing dynamic fields
+  const [dynamicFields, setDynamicFields] = useState<
+    Array<{ label: string; value: string }>
+  >([]);
   const formRef = useRef<HTMLFormElement>(null);
+
+  // Handler for adding a new dynamic field
+  const handleAddField = () => {
+    setDynamicFields([...dynamicFields, { label: "", value: "" }]);
+  };
+
+  // Handler for removing a dynamic field
+  const handleRemoveField = (index: number) => {
+    setDynamicFields(dynamicFields.filter((_, i) => i !== index));
+  };
+
+  // Handler for updating dynamic fields
+  const handleFieldChange = (
+    index: number,
+    key: "label" | "value",
+    value: string
+  ) => {
+    const updatedFields = [...dynamicFields];
+    updatedFields[index][key] = value;
+    setDynamicFields(updatedFields);
+  };
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     try {
       await createPatientDetailAction(
-        // patientId,
-        chiefComplaint,
-        existingDisease,
-        signAndSymptoms,
-        examinationDetails,
-        labInvestigation,
-        xRaysOrMRs,
-        finalDiagnosis,
-        treatmentPresented,
-        followUp,
+        {
+          chiefComplaint,
+          existingDisease,
+          signAndSymptoms,
+          examinationDetails,
+          labInvestigation,
+          xRaysOrMRs,
+          finalDiagnosis,
+          treatmentPresented,
+          followUp,
+          dynamicFields, // Include dynamic fields
+        },
         userId
       );
       formRef.current?.reset();
+      // Optionally close the sheet if needed
     } catch (error) {
       console.error("Failed to add patient details:", error);
     }
@@ -65,7 +94,7 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
           <SheetHeader className="mb-5">
             <SheetTitle>Add Details</SheetTitle>
             <SheetDescription>
-              Add patient details here. Click save when you&apos;re done.
+              Add patient details here. Click save when you're done.
             </SheetDescription>
           </SheetHeader>
           <form
@@ -163,6 +192,44 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
                 placeholder="Follow Up"
               />
             </div>
+
+            {/* Dynamic fields */}
+            <div className="space-y-2 mt-4">
+              <Label>Dynamic Fields</Label>
+              {dynamicFields.map((field, index) => (
+                <div key={index} className="space-y-2 mt-2">
+                  <Input
+                    type="text"
+                    placeholder="Label"
+                    value={field.label}
+                    onChange={(e) =>
+                      handleFieldChange(index, "label", e.target.value)
+                    }
+                    className="text-white"
+                  />
+                  <Textarea
+                    placeholder="Value"
+                    value={field.value}
+                    onChange={(e) =>
+                      handleFieldChange(index, "value", e.target.value)
+                    }
+                    className="text-white mt-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => handleRemoveField(index)}
+                    className="mt-1"
+                  >
+                    Remove Field
+                  </Button>
+                </div>
+              ))}
+              <Button type="button" onClick={handleAddField} className="mt-2">
+                Add Dynamic Field
+              </Button>
+            </div>
+
             <SheetFooter className="mt-5">
               <SheetClose asChild>
                 <Button type="submit">Save Changes</Button>

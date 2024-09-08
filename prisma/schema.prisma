@@ -23,6 +23,21 @@ model Patient {
   Details  Details?
 }
 
+// model Details {
+//   id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+//   chiefComplaint     String?
+//   existingDisease    String?
+//   signAndSymptoms    String?
+//   examinationDetails String?
+//   labInvestigation   String?
+//   xRaysOrMRs         String?
+//   finalDiagnosis     String?
+//   treatmentPresented String?
+//   followUp           String?
+//   userId             String  @unique @db.ObjectId
+//   patient            Patient @relation(fields: [userId], references: [id])
+// }
+
 model Details {
   id                 String  @id @default(auto()) @map("_id") @db.ObjectId
   chiefComplaint     String?
@@ -34,6 +49,7 @@ model Details {
   finalDiagnosis     String?
   treatmentPresented String?
   followUp           String?
+  dynamicFields      Json? // Adding dynamicFields as JSON type
   userId             String  @unique @db.ObjectId
   patient            Patient @relation(fields: [userId], references: [id])
 }
