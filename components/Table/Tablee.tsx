@@ -202,7 +202,7 @@ export function Tablee({ patients }: TableProps) {
             placeholder="Search by name or contact..."
             value={globalFilter ?? ""}
             onChange={(event) => setGlobalFilter(event.target.value)}
-            className="h-8 w-[150px] lg:w-[300px] py-5"
+            className="h-8 w-[150px] lg:w-[300px] py-5 outline outline-[#272F3E]"
           />
           {isFiltered && (
             <Button
@@ -225,7 +225,7 @@ export function Tablee({ patients }: TableProps) {
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className=" bg-[#101929]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

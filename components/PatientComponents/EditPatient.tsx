@@ -54,7 +54,7 @@ const EditPatient: React.FC<EditPatientProps> = ({ patient, onClose }) => {
             onSubmit={handleSubmit}
             className="flex flex-col gap-5 mb-5"
           >
-            <Label>Name</Label>
+            <Label className=" mt-4">Name</Label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -86,9 +86,20 @@ const EditPatient: React.FC<EditPatientProps> = ({ patient, onClose }) => {
               type="text"
               placeholder="Contact"
             />
-            <SheetFooter>
+            <SheetFooter className="flex justify-between mt-5">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  onClose();
+                }}
+              >
+                Cancel
+              </Button>
               <SheetClose asChild>
-                <Button type="submit">Save Changes</Button>
+                <Button type="submit" variant="addPatient">
+                  Save Changes
+                </Button>
               </SheetClose>
             </SheetFooter>
           </form>

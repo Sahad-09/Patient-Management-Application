@@ -47,7 +47,13 @@ const DeletePatient: React.FC<DeletePatientProps> = ({ patient, onClose }) => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel
+              onClick={() => {
+                onClose();
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => handleDelete(patient.id)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

@@ -98,7 +98,7 @@ export function NewPatientForm() {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="addPatient" onClick={() => setIsDialogOpen(true)}>
-          Add Patient
+          New Patient
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -158,9 +158,18 @@ export function NewPatientForm() {
             <p className="text-red-500">{formErrors.contact}</p>
           )}
 
-          <Button type="submit" variant="addPatient">
-            Add Patient
-          </Button>
+          <div className="flex gap-4 mt-5">
+            <Button type="submit" variant="addPatient">
+              Add Patient
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

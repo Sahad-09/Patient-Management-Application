@@ -24,6 +24,7 @@ interface EditDetailsProps {
 }
 
 const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [chiefComplaint, setChiefComplaint] = useState(
     details.chiefComplaint || ""
   );
@@ -105,15 +106,15 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
 
   return (
     <div>
-      <Sheet>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button>Edit Details</Button>
+          <Button onClick={() => setIsOpen(true)}>Edit Details</Button>
         </SheetTrigger>
         <SheetContent className="sm:max-w-[425px] overflow-y-auto">
           <SheetHeader className="mb-5">
             <SheetTitle>Edit Details</SheetTitle>
             <SheetDescription>
-              Edit patient details here. Click save when you&apos;re done.
+              Edit patient details here. Click save when you're done.
             </SheetDescription>
           </SheetHeader>
           <form
@@ -214,13 +215,13 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
 
             {/* Dynamic fields */}
             <div className="space-y-2 mt-4 flex flex-col">
-              <Label>Dynamic Fields</Label>
+              <Label>Custom Fields (Add if Required)</Label>
               {dynamicFields.map((field, index) => (
                 <div key={index} className="space-y-2 mt-2">
                   <div className="flex items-center space-x-2">
                     <Input
                       type="text"
-                      placeholder="Label"
+                      placeholder="Enter Side Heading"
                       value={field.label}
                       onChange={(e) =>
                         handleFieldChange(index, "label", e.target.value)
@@ -237,7 +238,7 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
                     </Button>
                   </div>
                   <Textarea
-                    placeholder="Value"
+                    placeholder="Enter Information Here"
                     value={field.value}
                     onChange={(e) =>
                       handleFieldChange(index, "value", e.target.value)
@@ -247,11 +248,21 @@ const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
                 </div>
               ))}
               <Button type="button" onClick={handleAddField} className="mt-2">
-                Add Dynamic Field
+                Add Custom Field
               </Button>
             </div>
 
-            <SheetFooter className="mt-5">
+            <SheetFooter className="mt-5 flex justify-between">
+              <Button
+                type="button"
+                onClick={() => {
+                  formRef.current?.reset();
+                  setIsOpen(false); // Close the sheet when cancel is clicked
+                }}
+                variant="outline"
+              >
+                Cancel
+              </Button>
               <SheetClose asChild>
                 <Button variant="addPatient" type="submit">
                   Save Changes

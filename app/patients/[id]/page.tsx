@@ -2,17 +2,12 @@ import React from "react";
 import { getPatientDetails } from "@/lib/details";
 import { getPatient } from "@/lib/patients";
 import { Details, Patient } from "@/types";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import EditDetails from "@/components/DetailsComponents/EditDetails";
-import AddDetails from "@/components/DetailsComponents/AddDetails";
-import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface PageProps {
   params: {
@@ -62,19 +57,34 @@ export default async function Page({ params }: PageProps) {
   const patientResponse = await getPatient(params.id);
   const { id } = params;
 
-  if ("error" in detailResponse) {
-    return <div>Error: {JSON.stringify(detailResponse.error)}</div>;
-  }
-
-  if ("error" in patientResponse) {
-    return <div>Error: {JSON.stringify(patientResponse.error)}</div>;
+  if ("error" in detailResponse || "error" in patientResponse) {
+    return (
+      <Card className="w-full max-w-3xl mx-auto">
+        <CardContent className="pt-6">
+          <div className="text-center text-red-500">
+            Error:{" "}
+            {JSON.stringify(
+              "error" in detailResponse
+                ? detailResponse.error
+                : patientResponse.error
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   const { patientDetails } = detailResponse;
   const { patient } = patientResponse;
 
   if (!patientDetails || !Array.isArray(patientDetails)) {
-    return <div>No patient details available</div>;
+    return (
+      <Card className="w-full max-w-3xl mx-auto">
+        <CardContent className="pt-6">
+          <div className="text-center">No patient details available</div>
+        </CardContent>
+      </Card>
+    );
   }
 
   const validPatientDetails = patientDetails
@@ -82,56 +92,57 @@ export default async function Page({ params }: PageProps) {
     .map(transformDetails);
 
   return (
-    <div>
-      <Card className="w-full max-w-3xl mx-auto bg-dark-blue text-white">
+    <div className="container my-auto">
+      <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl">Patient Information</CardTitle>
+          <div className="flex items-center space-x-4">
+            <Avatar className="h-20 w-20">
+              <AvatarImage
+                src={`https://api.dicebear.com/6.x/initials/svg?seed=${patient?.name}`}
+              />
+              <AvatarFallback>{patient?.name?.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <CardTitle className="text-3xl font-bold">
+                {patient?.name}
+              </CardTitle>
+              <div className="flex space-x-2 mt-2">
+                <Badge variant="outline">{patient?.age} years</Badge>
+                <Badge variant="outline">{patient?.sex}</Badge>
+                <Badge variant="outline">{patient?.contact}</Badge>
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <PatientInfo patient={patient} />
-          <Separator className="my-6" />
-
-          <ScrollArea className="h-[400px] pr-4">
-            {validPatientDetails.length > 0 ? (
-              validPatientDetails.map((detail) => (
-                <PatientDetailCard
-                  key={detail.id}
-                  detail={detail}
-                  userId={id}
-                />
-              ))
-            ) : (
-              <NoPatientDetails userId={id} />
-            )}
-          </ScrollArea>
+          <Tabs defaultValue="details" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="details">Patient Details</TabsTrigger>
+              <TabsTrigger value="history">Medical History</TabsTrigger>
+            </TabsList>
+            <TabsContent value="details">
+              <ScrollArea className="h-[500px] pr-4 mt-4">
+                {validPatientDetails.length > 0 ? (
+                  validPatientDetails.map((detail) => (
+                    <PatientDetailCard
+                      key={detail.id}
+                      detail={detail}
+                      userId={id}
+                    />
+                  ))
+                ) : (
+                  <NoPatientDetails userId={id} />
+                )}
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="history">
+              <div className="p-4 text-center text-gray-500">
+                Medical history not available
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-function PatientInfo({ patient }: { patient: Patient | undefined }) {
-  return (
-    <div className="grid grid-cols-2 gap-4 mb-6">
-      <InfoItem label="Name" value={patient?.name} />
-      <InfoItem label="Age" value={patient?.age} />
-      <InfoItem label="Sex" value={patient?.sex} />
-      <InfoItem label="Contact" value={patient?.contact} />
-    </div>
-  );
-}
-
-function InfoItem({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | undefined;
-}) {
-  return (
-    <div>
-      <p className="text-sm font-medium text-gray-300">{label}</p>
-      <p className="text-lg font-semibold">{value}</p>
     </div>
   );
 }
@@ -145,9 +156,9 @@ function DetailItem({
 }) {
   if (!value) return null;
   return (
-    <div>
-      <dt className="text-lg font-medium text-gray-400">{label}</dt>
-      <dd className="text-sm text-gray-100 mb-3">{value}</dd>
+    <div className="mb-6">
+      <dt className="text-xl font-medium text-blue-300">{label}</dt>
+      <dd className="mt-2 text-lg text-gray-100">{value}</dd>
     </div>
   );
 }
@@ -160,14 +171,12 @@ function PatientDetailCard({
   userId: string;
 }) {
   return (
-    <Card className="mb-4 bg-dark-blue text-white">
+    <Card className="mb-6">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold mb-4">
-          Patient Details
-        </CardTitle>
+        <CardTitle className="text-3xl font-semibold">Visit Details</CardTitle>
       </CardHeader>
       <CardContent>
-        <dl className="space-y-2">
+        <dl className="space-y-4">
           <DetailItem label="Chief Complaint" value={detail.chiefComplaint} />
           <DetailItem label="Existing Disease" value={detail.existingDisease} />
           <DetailItem
@@ -194,21 +203,41 @@ function PatientDetailCard({
             <DetailItem key={index} label={field.label} value={field.value} />
           ))}
         </dl>
+        <div className="mt-6">
+          <EditDetails details={detail} userId={userId} />
+        </div>
       </CardContent>
-      <CardFooter>
-        <EditDetails details={detail} userId={userId} />
-      </CardFooter>
     </Card>
   );
 }
 
 function NoPatientDetails({ userId }: { userId: string }) {
   return (
-    <>
-      <h1>No Patient Details</h1>
-      <CardFooter>
+    <Card>
+      <CardContent className="pt-6">
+        <h2 className="text-xl font-semibold mb-4">No Patient Details</h2>
         <AddDetails userId={userId} />
-      </CardFooter>
-    </>
+      </CardContent>
+    </Card>
   );
+}
+
+// Placeholder components for EditDetails and AddDetails
+// Replace these with your actual implementations
+function EditDetails({
+  details,
+  userId,
+}: {
+  details: Details;
+  userId: string;
+}) {
+  return (
+    <Button variant="outline" className="text-lg">
+      Edit Details
+    </Button>
+  );
+}
+
+function AddDetails({ userId }: { userId: string }) {
+  return <Button className="text-lg">Add Details</Button>;
 }
