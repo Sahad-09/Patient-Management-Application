@@ -94,7 +94,7 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
           <SheetHeader className="mb-5">
             <SheetTitle>Add Details</SheetTitle>
             <SheetDescription>
-              Add patient details here. Click save when you're done.
+              Add patient details here. Click save when you&apos;re done.
             </SheetDescription>
           </SheetHeader>
           <form
