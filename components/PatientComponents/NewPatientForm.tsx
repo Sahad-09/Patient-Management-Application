@@ -1,13 +1,13 @@
 "use client";
 
 import { createPatientAction } from "@/lib/actions";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { z } from "zod";
 
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -15,9 +15,34 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+// Define the Zod schema for validation
+const patientSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  age: z
+    .string()
+    .min(1, { message: "Age is required" })
+    .regex(/^\d+$/, "Age must be a number"),
+  sex: z.string().min(1, { message: "Sex is required" }),
+  contact: z
+    .string()
+    .min(10, { message: "Contact number is required of 10 digits" })
+    .max(10, { message: "Contact number is required of 10 digits" })
+    .regex(/^\d+$/, "Contact must be a number"),
+});
 
 export function NewPatientForm() {
+  const now = new Date();
+  const formattedDateTime = now.toLocaleString();
   const formRef = useRef<HTMLFormElement>(null);
+  const [formErrors, setFormErrors] = useState<{
+    name?: string;
+    age?: string;
+    sex?: string;
+    contact?: string;
+  }>({});
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog open/close
 
   async function actionTo(data: FormData) {
     const name = data.get("name");
@@ -25,22 +50,49 @@ export function NewPatientForm() {
     const sex = data.get("sex");
     const contact = data.get("contact");
 
-    if (!name || typeof name !== "string") return;
-    if (!age || typeof age !== "string") return;
-    if (!sex || typeof sex !== "string") return;
-    if (!contact || typeof contact !== "string") return;
+    // Create an object from form data to validate with Zod
+    const formData = { name, age, sex, contact };
 
-    // call a server action to create patient
-    await createPatientAction(name, age, sex, contact);
+    // Zod validation
+    const result = patientSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((error) => {
+        if (error.path[0] in formData) {
+          fieldErrors[error.path[0] as string] = error.message;
+        }
+      });
+      setFormErrors(fieldErrors);
+      return;
+    }
 
-    // reset form
+    // If validation passes, clear errors and proceed
+    setFormErrors({});
+
+    // Call a server action to create patient
+    await createPatientAction(
+      name as string,
+      age as string,
+      sex as string,
+      contact as string
+    );
+
+    // Reset form and close the dialog
     formRef.current?.reset();
+    setIsDialogOpen(false);
+
+    // Show toast with the date and time
+    toast(`Patient added on ${formattedDateTime}`, {
+      description: "The patient was added successfully.",
+    });
   }
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="addPatient">Add Patient</Button>
+        <Button variant="addPatient" onClick={() => setIsDialogOpen(true)}>
+          Add Patient
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -51,7 +103,11 @@ export function NewPatientForm() {
         </DialogHeader>
         <form
           ref={formRef}
-          action={actionTo}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(formRef.current as HTMLFormElement);
+            actionTo(formData);
+          }}
           className="flex flex-col gap-5 mb-5"
         >
           <Label>Name</Label>
@@ -61,6 +117,8 @@ export function NewPatientForm() {
             name="name"
             placeholder="Name"
           />
+          {formErrors.name && <p className="text-red-500">{formErrors.name}</p>}
+
           <Label>Age</Label>
           <Input
             className="text-white"
@@ -68,6 +126,8 @@ export function NewPatientForm() {
             name="age"
             placeholder="Age"
           />
+          {formErrors.age && <p className="text-red-500">{formErrors.age}</p>}
+
           <Label>Sex</Label>
           <Input
             className="text-white"
@@ -75,6 +135,8 @@ export function NewPatientForm() {
             name="sex"
             placeholder="Sex"
           />
+          {formErrors.sex && <p className="text-red-500">{formErrors.sex}</p>}
+
           <Label>Contact</Label>
           <Input
             className="text-white"
@@ -82,40 +144,14 @@ export function NewPatientForm() {
             name="contact"
             placeholder="Contact"
           />
-          <Button type="submit">Add Patient</Button>
-        </form>
+          {formErrors.contact && (
+            <p className="text-red-500">{formErrors.contact}</p>
+          )}
 
-        {/* <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="name"
-              defaultValue="Pedro Duarte"
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Username
-            </Label>
-            <Input
-              id="username"
-              defaultValue="@peduarte"
-              className="col-span-3"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter> */}
+          <Button type="submit" variant="default">
+            Add Patient
+          </Button>
+        </form>
       </DialogContent>
     </Dialog>
   );

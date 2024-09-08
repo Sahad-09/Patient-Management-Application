@@ -89,6 +89,30 @@ export async function deletePatient(id: string) {
   }
 }
 
+export async function deletePatients(ids: string[]) {
+  try {
+    await prisma.$transaction(async (prisma) => {
+      // Delete Details associated with the Patients
+      await prisma.details.deleteMany({
+        where: {
+          userId: { in: ids }
+        }
+      });
+
+      // Delete the Patients
+      const patients = await prisma.patient.deleteMany({
+        where: {
+          id: { in: ids },
+        },
+      });
+      return { patients };
+    });
+  } catch (error) {
+    return { error };
+  }
+}
+
+
 export async function updatePatient(
   id: string,
   name: string,

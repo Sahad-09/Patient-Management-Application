@@ -4,8 +4,8 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Generate and insert dummy data for Patients
-  const patientData = Array.from({ length: 10 }).map(() => ({
+  // Generate and insert dummy data for 15 Patients
+  const patientData = Array.from({ length: 15 }).map(() => ({
     name: faker.name.fullName(),
     age: faker.datatype.number({ min: 1, max: 100 }).toString(),
     sex: faker.name.sex(),
@@ -16,7 +16,7 @@ async function main() {
     data: patientData,
   });
 
-  console.log('Patients inserted successfully!');
+  console.log('15 Patients inserted successfully!');
 
   // Fetch the inserted patients to create corresponding Details
   const insertedPatients = await prisma.patient.findMany();
@@ -32,7 +32,9 @@ async function main() {
     finalDiagnosis: faker.lorem.sentence(),
     treatmentPresented: faker.lorem.sentence(),
     followUp: faker.lorem.sentence(),
-    userId: patient.id, // Use the patient's id as userId
+    patient: {
+      connect: { id: patient.id }, // Link the Details to the existing Patient by ID
+    },
   }));
 
   // Insert details for each patient
@@ -42,7 +44,7 @@ async function main() {
     });
   }
 
-  console.log('Details inserted successfully!');
+  console.log('Details for 15 patients inserted successfully!');
 }
 
 main()

@@ -19,9 +19,10 @@ import { Patient } from "@/types";
 
 interface EditPatientProps {
   patient: Patient;
+  onClose: () => void;
 }
 
-const EditPatient: React.FC<EditPatientProps> = ({ patient }) => {
+const EditPatient: React.FC<EditPatientProps> = ({ patient, onClose }) => {
   const [name, setName] = useState(patient.name);
   const [age, setAge] = useState(patient.age);
   const [sex, setSex] = useState(patient.sex);
@@ -32,6 +33,7 @@ const EditPatient: React.FC<EditPatientProps> = ({ patient }) => {
     event.preventDefault();
     await updatePatientAction(patient.id, name, age, sex, contact);
     formRef.current?.reset();
+    onClose();
   }
 
   return (

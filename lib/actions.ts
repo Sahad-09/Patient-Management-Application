@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from "next/cache";
-import { createPatient, deletePatient, updatePatient } from "./patients";
+import { createPatient, deletePatient, updatePatient, deletePatients } from "./patients";
 import { createPatientDetail, deletePatientDetail, updatePatientDetail } from "./details";
 
 export async function createPatientAction(
@@ -28,6 +28,11 @@ export async function updatePatientAction(
 ) {
   await updatePatient(id, name, age, sex, contact);
   revalidatePath('/patients');
+}
+
+export async function deletePatientsAction(ids: string[]) {
+  await deletePatients(ids);
+  revalidatePath('/patients'); // Revalidate after deleting multiple patients
 }
 
 // Add the following for Details actions:

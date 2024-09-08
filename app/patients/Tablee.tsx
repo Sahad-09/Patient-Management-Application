@@ -13,13 +13,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
-import { useRouter } from "next/navigation"; // Use next/navigation for the App Router
+import { ArrowUpDown, ChevronDown, MoreHorizontal, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-
+import { NewPatientForm } from "@/components/PatientComponents/NewPatientForm";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Patient } from "@/types"; // Import the Patient type from your types file
+import { Patient } from "@/types";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -30,16 +30,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import {
   Table,
   TableBody,
   TableCell,
@@ -47,22 +37,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import DeletePatient from "@/components/PatientComponents/DeletePatient"; // named import here
-import EditPatient from "@/components/PatientComponents/EditPatient"; // named import here
+import { Input } from "@/components/ui/input";
+import DeletePatient from "@/components/PatientComponents/DeletePatient";
+import EditPatient from "@/components/PatientComponents/EditPatient";
+import DeletePatients from "@/components/PatientComponents/DeletePatients";
+import { useState, useEffect } from "react";
 
-// DateTimeCell component for client-side date formatting
 const DateTimeCell: React.FC<{ dateTime: string }> = ({ dateTime }) => {
   const [formattedDate, setFormattedDate] = React.useState<string>("");
 
   React.useEffect(() => {
-    // Format the date only on the client side
     setFormattedDate(new Date(dateTime).toLocaleString());
   }, [dateTime]);
 
   return <div>{formattedDate}</div>;
 };
 
-// Define columns for the Patient table
 export const columns: ColumnDef<Patient>[] = [
   {
     id: "select",
@@ -125,19 +115,28 @@ export const columns: ColumnDef<Patient>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const [isOpen, setIsOpen] = useState(false);
       const patient = row.original;
 
+      const handleClose = () => {
+        setIsOpen(false);
+      };
+
       return (
-        <DropdownMenu>
+        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              onClick={() => setIsOpen(true)}
+            >
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <EditPatient patient={patient} />
-            <DeletePatient patient={patient} />
+            <EditPatient patient={patient} onClose={handleClose} />
+            <DeletePatient patient={patient} onClose={handleClose} />
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -149,8 +148,6 @@ interface TableProps {
   patients: Patient[];
 }
 
-// Update Tablee component to accept patients as a prop
-
 export function Tablee({ patients }: TableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -159,12 +156,17 @@ export function Tablee({ patients }: TableProps) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [selectedPatients, setSelectedPatients] = React.useState<Patient[]>([]);
 
-  const router = useRouter(); // Correct hook for app directory
+  const sortedPatients = React.useMemo(() => {
+    return [...patients].sort((a, b) => {
+      return new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime();
+    });
+  }, [patients]);
 
-  // Set up table data and column configurations
   const table = useReactTable({
-    data: patients ?? [], // Use the passed patient data or an empty array
+    data: sortedPatients,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -174,69 +176,86 @@ export function Tablee({ patients }: TableProps) {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const value = row.getValue(columnId) as string;
+      return value.toLowerCase().includes(filterValue.toLowerCase());
+    },
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter,
     },
+    onGlobalFilterChange: setGlobalFilter,
   });
+
+  useEffect(() => {
+    const selected = table
+      .getFilteredSelectedRowModel()
+      .rows.map((row) => row.original);
+    setSelectedPatients(selected);
+  }, [table.getFilteredSelectedRowModel().rows]);
+
+  const resetFilters = () => {
+    setGlobalFilter("");
+    table.resetColumnFilters();
+  };
+
+  const handleDeleteSelected = () => {
+    setRowSelection({});
+    setSelectedPatients([]);
+    // You might want to refresh the patients list here
+    // For example: refetchPatients();
+  };
+
+  const isFiltered =
+    globalFilter !== "" || table.getState().columnFilters.length > 0;
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter by name..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+      <div className="flex items-center justify-between py-4">
+        <div className="flex items-center space-x-2">
+          <Input
+            placeholder="Search by name or contact..."
+            value={globalFilter ?? ""}
+            onChange={(event) => setGlobalFilter(event.target.value)}
+            className="h-8 w-[150px] lg:w-[250px]"
+          />
+          {isFiltered && (
+            <Button
+              variant="ghost"
+              onClick={resetFilters}
+              className="h-8 px-2 lg:px-3"
+            >
+              Reset
+              <X className="ml-2 h-4 w-4" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          )}
+        </div>
+        <div className="flex items-center space-x-2">
+          <NewPatientForm />
+          <DeletePatients
+            selectedPatients={selectedPatients}
+            onDelete={handleDeleteSelected}
+          />
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -250,7 +269,6 @@ export function Tablee({ patients }: TableProps) {
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {cell.column.id === "name" ? (
-                        // Only wrap the patient's name in the Link component
                         <Link href={`/patients/${row.original.id}`}>
                           <span className="cursor-pointer text-[#00F7F7] hover:underline">
                             {flexRender(

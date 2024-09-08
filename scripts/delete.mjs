@@ -3,9 +3,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Fetch 5 random patients from the database
+  // Fetch 10 random patients from the database
   const patients = await prisma.patient.findMany({
-    take: 5, // limit to 5 patients
+    take: 10, // limit to 10 patients
     orderBy: {
       id: 'asc', // Assuming you have an 'id' field and want to delete in ascending order
     },
@@ -28,7 +28,7 @@ async function main() {
     });
   }
 
-  console.log('5 random patients and their related details deleted successfully!');
+  console.log('10 random patients and their related details deleted successfully!');
 }
 
 main()
