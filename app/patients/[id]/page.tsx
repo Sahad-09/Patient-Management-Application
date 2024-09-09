@@ -201,7 +201,7 @@ function PatientDetailCard({
 function NoPatientDetails({ userId }: { userId: string }) {
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardContent className=" mt-3 flex flex-row justify-between">
         <h2 className="text-xl font-semibold mb-4 text-[#721B1C]">
           No Patient Details
         </h2>
