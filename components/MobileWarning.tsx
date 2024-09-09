@@ -1,20 +1,32 @@
 import React from "react";
-import { isMobile } from "react-device-detect";
+import { cn } from "@/lib/utils";
+import { Inter as FontSans } from "next/font/google";
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 const MobileWarning = () => {
-  if (isMobile) {
-    return (
-      <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-75 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg text-center">
-          <h2 className="text-lg font-semibold mb-4">Optimized for Desktop</h2>
-          <p>
-            Please access our site from a computer for a smoother experience.
-          </p>
-        </div>
+  const isMobile =
+    typeof window !== "undefined" &&
+    /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  return (
+    isMobile && (
+      <div
+        className={cn(
+          "fixed top-0 left-0 w-full bg-gray-900 text-white p-4 text-center",
+          fontSans.variable
+        )}
+      >
+        <p>
+          Our site is currently optimized for desktop use. For a smoother
+          experience, please access it from a computer.
+        </p>
       </div>
-    );
-  }
-  return null;
+    )
+  );
 };
 
 export default MobileWarning;
