@@ -22,6 +22,7 @@ interface AddDetailsProps {
 }
 
 const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [chiefComplaint, setChiefComplaint] = useState("");
   const [existingDisease, setExistingDisease] = useState("");
   const [signAndSymptoms, setSignAndSymptoms] = useState("");
@@ -86,9 +87,9 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
 
   return (
     <div>
-      <Sheet>
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button>Add Details</Button>
+          <Button onClick={() => setIsOpen(true)}>Add Details</Button>
         </SheetTrigger>
         <SheetContent className="sm:max-w-[425px] overflow-y-auto">
           <SheetHeader className="mb-5">
@@ -194,45 +195,59 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
             </div>
 
             {/* Dynamic fields */}
-            <div className="space-y-2 mt-4">
-              <Label>Dynamic Fields</Label>
+            <div className="space-y-2 mt-4 flex flex-col">
+              <Label>Custom Fields (Add if Required)</Label>
               {dynamicFields.map((field, index) => (
                 <div key={index} className="space-y-2 mt-2">
-                  <Input
-                    type="text"
-                    placeholder="Label"
-                    value={field.label}
-                    onChange={(e) =>
-                      handleFieldChange(index, "label", e.target.value)
-                    }
-                    className="text-white"
-                  />
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type="text"
+                      placeholder="Enter Side Heading"
+                      value={field.label}
+                      onChange={(e) =>
+                        handleFieldChange(index, "label", e.target.value)
+                      }
+                      className="text-white flex-grow"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={() => handleRemoveField(index)}
+                      className="px-2 py-1 h-auto"
+                    >
+                      X
+                    </Button>
+                  </div>
                   <Textarea
-                    placeholder="Value"
+                    placeholder="Enter Information Here"
                     value={field.value}
                     onChange={(e) =>
                       handleFieldChange(index, "value", e.target.value)
                     }
                     className="text-white mt-1"
                   />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={() => handleRemoveField(index)}
-                    className="mt-1"
-                  >
-                    Remove Field
-                  </Button>
                 </div>
               ))}
               <Button type="button" onClick={handleAddField} className="mt-2">
-                Add Dynamic Field
+                Add Custom Field
               </Button>
             </div>
 
-            <SheetFooter className="mt-5">
+            <SheetFooter className="mt-5 flex justify-between">
+              <Button
+                type="button"
+                onClick={() => {
+                  formRef.current?.reset();
+                  setIsOpen(false); // Close the sheet when cancel is clicked
+                }}
+                variant="outline"
+              >
+                Cancel
+              </Button>
               <SheetClose asChild>
-                <Button type="submit">Save Changes</Button>
+                <Button variant="addPatient" type="submit">
+                  Save Changes
+                </Button>
               </SheetClose>
             </SheetFooter>
           </form>

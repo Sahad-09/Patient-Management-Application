@@ -202,7 +202,9 @@ function NoPatientDetails({ userId }: { userId: string }) {
   return (
     <Card>
       <CardContent className="pt-6">
-        <h2 className="text-xl font-semibold mb-4">No Patient Details</h2>
+        <h2 className="text-xl font-semibold mb-4 text-[#721B1C]">
+          No Patient Details
+        </h2>
         <AddDetails userId={userId} />
       </CardContent>
     </Card>
