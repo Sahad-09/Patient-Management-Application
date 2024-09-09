@@ -161,8 +161,9 @@ function PatientDetailCard({
 }) {
   return (
     <Card className="mb-6">
-      <CardHeader>
+      <CardHeader className=" flex flex-row justify-between">
         <CardTitle className="text-3xl font-semibold">Visit Details</CardTitle>
+        <EditDetails details={detail} userId={userId} />
       </CardHeader>
       <CardContent>
         <dl className="space-y-4">
@@ -192,9 +193,6 @@ function PatientDetailCard({
             <DetailItem key={index} label={field.label} value={field.value} />
           ))}
         </dl>
-        <div className="mt-6">
-          <EditDetails details={detail} userId={userId} />
-        </div>
       </CardContent>
     </Card>
   );
