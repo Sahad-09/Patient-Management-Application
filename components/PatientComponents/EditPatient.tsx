@@ -22,7 +22,11 @@ interface EditPatientProps {
   onClose: () => void;
 }
 
-const EditPatient: React.FC<EditPatientProps> = ({ patient, onClose }) => {
+const EditPatient: React.FC<EditPatientProps> = ({
+  patient,
+  onClose,
+  userId,
+}) => {
   const [name, setName] = useState(patient.name);
   const [age, setAge] = useState(patient.age);
   const [sex, setSex] = useState(patient.sex);
@@ -31,7 +35,7 @@ const EditPatient: React.FC<EditPatientProps> = ({ patient, onClose }) => {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    await updatePatientAction(patient.id, name, age, sex, contact);
+    await updatePatientAction(patient.id, name, age, sex, contact, userId);
     formRef.current?.reset();
     onClose();
   }

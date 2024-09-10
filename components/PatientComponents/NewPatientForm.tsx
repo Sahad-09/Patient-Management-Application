@@ -39,7 +39,11 @@ const patientSchema = z.object({
     .regex(/^\d+$/, "Contact must be a number"),
 });
 
-export function NewPatientForm() {
+interface NewPatientFormProps {
+  userId: string;
+}
+
+export function NewPatientForm({ userId }: NewPatientFormProps) {
   const now = new Date();
   const formattedDateTime = now.toLocaleString();
   const formRef = useRef<HTMLFormElement>(null);
@@ -81,7 +85,8 @@ export function NewPatientForm() {
       name as string,
       age as string,
       sex as string,
-      contact as string
+      contact as string,
+      userId as string
     );
 
     // Reset form and close the dialog

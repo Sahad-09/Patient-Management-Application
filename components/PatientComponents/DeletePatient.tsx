@@ -19,10 +19,15 @@ interface DeletePatientProps {
   patient: Patient;
   // onDelete: () => void; // Callback to handle post-deletion actions
   onClose: () => void; // Callback to close the dropdown menu
+  userId: string;
 }
-const DeletePatient: React.FC<DeletePatientProps> = ({ patient, onClose }) => {
+const DeletePatient: React.FC<DeletePatientProps> = ({
+  patient,
+  onClose,
+  userId,
+}) => {
   async function handleDelete(id: string) {
-    await deletePatientAction(id);
+    await deletePatientAction(id, userId);
     toast("Patient has been deleted", {
       description: `${patient.name} has been removed from our records.`,
     });

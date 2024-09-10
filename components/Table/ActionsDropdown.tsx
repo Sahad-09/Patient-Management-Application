@@ -34,8 +34,16 @@ const ActionsDropdown: React.FC<ActionsDropdownProps> = ({ patient }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <EditPatient patient={patient} onClose={handleClose} />
-        <DeletePatient patient={patient} onClose={handleClose} />
+        <EditPatient
+          patient={patient}
+          onClose={handleClose}
+          userId={patient.userId}
+        />
+        <DeletePatient
+          patient={patient}
+          onClose={handleClose}
+          userId={patient.userId}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );

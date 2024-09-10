@@ -25,6 +25,7 @@ export interface Patient {
   sex: string;
   contact: string;
   dateTime: Date;
+  userId: string
   // Details?: Details; // Changed from PatientDetails to Details
 }
 

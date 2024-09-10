@@ -21,9 +21,14 @@ import { Details } from "@/types";
 interface EditDetailsProps {
   details: Details;
   userId: string;
+  patientId: string;
 }
 
-const EditDetails: React.FC<EditDetailsProps> = ({ details, userId }) => {
+const EditDetails: React.FC<EditDetailsProps> = ({
+  details,
+  userId,
+  patientId,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [chiefComplaint, setChiefComplaint] = useState(
     details.chiefComplaint || ""

@@ -4,12 +4,13 @@ import { getPatient } from "@/lib/patients";
 import { Details, Patient } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import AddDetails from "@/components/DetailsComponents/AddDetails";
 import EditDetails from "@/components/DetailsComponents/EditDetails";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 interface PageProps {
   params: {
@@ -55,9 +56,17 @@ function transformDetails(detail: any): Details {
 }
 
 export default async function Page({ params }: PageProps) {
-  const detailResponse = await getPatientDetails(params.id);
-  const patientResponse = await getPatient(params.id);
-  const { id } = params;
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user?.id) {
+    redirect("/api/auth/signin");
+  }
+
+  const userId = session.user.id;
+  const patientId = params.id;
+
+  const detailResponse = await getPatientDetails(patientId);
+  const patientResponse = await getPatient(patientId, userId);
 
   if ("error" in detailResponse || "error" in patientResponse) {
     return (
@@ -78,6 +87,16 @@ export default async function Page({ params }: PageProps) {
 
   const { patientDetails } = detailResponse;
   const { patient } = patientResponse;
+
+  if (!patient) {
+    return (
+      <Card className="w-full max-w-3xl mx-auto">
+        <CardContent className="pt-6">
+          <div className="text-center">Patient not found or access denied</div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!patientDetails || !Array.isArray(patientDetails)) {
     return (
@@ -123,11 +142,12 @@ export default async function Page({ params }: PageProps) {
                 <PatientDetailCard
                   key={detail.id}
                   detail={detail}
-                  userId={id}
+                  userId={userId}
+                  patientId={patientId}
                 />
               ))
             ) : (
-              <NoPatientDetails userId={id} />
+              <NoPatientDetails userId={userId} patientId={patientId} />
             )}
           </ScrollArea>
         </CardContent>
@@ -155,15 +175,19 @@ function DetailItem({
 function PatientDetailCard({
   detail,
   userId,
+  patientId,
 }: {
   detail: Details;
   userId: string;
+  patientId: string;
 }) {
+  console.log("Detailssss ", detail);
+
   return (
     <Card className="mb-6">
       <CardHeader className=" flex flex-row justify-between">
         <CardTitle className="text-3xl font-semibold">Visit Details</CardTitle>
-        <EditDetails details={detail} userId={userId} />
+        <EditDetails details={detail} userId={userId} patientId={patientId} />
       </CardHeader>
       <CardContent>
         <dl className="space-y-4">
@@ -198,14 +222,20 @@ function PatientDetailCard({
   );
 }
 
-function NoPatientDetails({ userId }: { userId: string }) {
+function NoPatientDetails({
+  userId,
+  patientId,
+}: {
+  userId: string;
+  patientId: string;
+}) {
   return (
     <Card>
       <CardContent className=" mt-3 flex flex-row justify-between">
         <h2 className="text-xl font-semibold mb-4 text-[#721B1C]">
           No Patient Details
         </h2>
-        <AddDetails userId={userId} />
+        <AddDetails userId={patientId} />
       </CardContent>
     </Card>
   );

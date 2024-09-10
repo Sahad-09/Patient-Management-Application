@@ -18,15 +18,17 @@ import { deletePatientsAction } from "@/lib/actions";
 interface DeletePatientsProps {
   selectedPatients: Patient[];
   onDelete: () => void;
+  userId: string;
 }
 
 const DeletePatients: React.FC<DeletePatientsProps> = ({
   selectedPatients,
   onDelete,
+  userId,
 }) => {
   async function handleDelete() {
     const ids = selectedPatients.map((patient) => patient.id);
-    await deletePatientsAction(ids);
+    await deletePatientsAction(ids, userId);
     toast("Patients have been deleted", {
       description: `${selectedPatients.length} patient(s) have been removed from our records.`,
     });
