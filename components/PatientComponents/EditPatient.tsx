@@ -20,6 +20,7 @@ import { Patient } from "@/types";
 interface EditPatientProps {
   patient: Patient;
   onClose: () => void;
+  userId: string;
 }
 
 const EditPatient: React.FC<EditPatientProps> = ({
