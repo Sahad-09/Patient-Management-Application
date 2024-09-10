@@ -19,7 +19,7 @@ const PatientsPage = async () => {
 
   const userId = session.user.id;
   return (
-    <div>
+    <div className=" m-6 pt-20">
       <Tablee patients={patients} userId={userId} />
     </div>
   );

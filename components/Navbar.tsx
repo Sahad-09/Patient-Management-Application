@@ -1,11 +1,10 @@
-// components/navbar.tsx
-import Link from "next/link";
-import ModeToggle from "@/components/Mode-toggle"
+// app/navbar.tsx (or any appropriate server component file)
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import NavbarClient from "@/components/NavbarClient";
 
-export default function Navbar() {
-  return (
-    <nav className="">
-     <ModeToggle />
-    </nav>
-  );
+export default async function Navbar() {
+  const session = await getServerSession(authOptions);
+
+  return <NavbarClient session={session} />;
 }

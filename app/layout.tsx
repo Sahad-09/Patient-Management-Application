@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased m-6",
+          "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
         )}
       >
@@ -41,8 +41,8 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            {/* <MobileWarning /> */}
             <Navbar />
-            <MobileWarning />
             {children}
             <Toaster />
           </ThemeProvider>
