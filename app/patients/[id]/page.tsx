@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import AddDetails from "@/components/DetailsComponents/AddDetails";
 import EditDetails from "@/components/DetailsComponents/EditDetails";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 interface PageProps {
