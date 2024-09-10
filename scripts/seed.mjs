@@ -4,47 +4,88 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Generate and insert dummy data for 15 Patients
-  const patientData = Array.from({ length: 15 }).map(() => ({
-    name: faker.name.fullName(),
-    age: faker.datatype.number({ min: 1, max: 100 }).toString(),
-    sex: faker.name.sex(),
-    contact: faker.phone.number(),
-  }));
+  // Create sample users
+  const users = await Promise.all(
+    Array.from({ length: 5 }).map(() =>
+      prisma.user.create({
+        data: {
+          name: faker.person.fullName(),
+          email: faker.internet.email(),
+          emailVerified: faker.date.past(),
+          image: faker.image.avatar(),
+        },
+      })
+    )
+  );
 
-  const patients = await prisma.patient.createMany({
-    data: patientData,
-  });
+  // Create sample patients with details
+  const patients = await Promise.all(
+    users.map((user) =>
+      prisma.patient.create({
+        data: {
+          name: faker.person.fullName(),
+          age: faker.number.int({ min: 0, max: 100 }).toString(),
+          sex: faker.person.gender(),
+          contact: faker.phone.number(),
+          dateTime: faker.date.past(),
+          userId: user.id,
+          Details: {
+            create: {
+              chiefComplaint: faker.lorem.sentence(),
+              existingDisease: faker.lorem.sentence(),
+              signAndSymptoms: faker.lorem.sentence(),
+              examinationDetails: faker.lorem.sentence(),
+              labInvestigation: faker.lorem.sentence(),
+              xRaysOrMRs: faker.lorem.sentence(),
+              finalDiagnosis: faker.lorem.sentence(),
+              treatmentPresented: faker.lorem.sentence(),
+              followUp: faker.lorem.sentence(),
+              dynamicFields: {
+                sampleField: faker.lorem.sentence(),
+              },
+              userId: user.id,
+            },
+          },
+        },
+      })
+    )
+  );
 
-  console.log('15 Patients inserted successfully!');
+  // Create sample accounts
+  await Promise.all(
+    users.map((user) =>
+      prisma.account.create({
+        data: {
+          userId: user.id,
+          type: 'oauth',
+          provider: 'google',
+          providerAccountId: faker.string.uuid(),
+          refresh_token: faker.lorem.words(),
+          access_token: faker.lorem.words(),
+          expires_at: faker.number.int(),
+          token_type: 'Bearer',
+          scope: 'email profile',
+          id_token: faker.lorem.words(),
+          session_state: 'active',
+        },
+      })
+    )
+  );
 
-  // Fetch the inserted patients to create corresponding Details
-  const insertedPatients = await prisma.patient.findMany();
+  // Create sample sessions
+  await Promise.all(
+    users.map((user) =>
+      prisma.session.create({
+        data: {
+          sessionToken: faker.string.uuid(),
+          userId: user.id,
+          expires: faker.date.future(),
+        },
+      })
+    )
+  );
 
-  // Generate and insert dummy data for Details related to each patient
-  const detailsData = insertedPatients.map((patient) => ({
-    chiefComplaint: faker.lorem.sentence(),
-    existingDisease: faker.lorem.word(),
-    signAndSymptoms: faker.lorem.sentence(),
-    examinationDetails: faker.lorem.sentence(),
-    labInvestigation: faker.lorem.sentence(),
-    xRaysOrMRs: faker.lorem.sentence(),
-    finalDiagnosis: faker.lorem.sentence(),
-    treatmentPresented: faker.lorem.sentence(),
-    followUp: faker.lorem.sentence(),
-    patient: {
-      connect: { id: patient.id }, // Link the Details to the existing Patient by ID
-    },
-  }));
-
-  // Insert details for each patient
-  for (const details of detailsData) {
-    await prisma.details.create({
-      data: details,
-    });
-  }
-
-  console.log('Details for 15 patients inserted successfully!');
+  console.log('Seeding completed!');
 }
 
 main()

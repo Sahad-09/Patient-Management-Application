@@ -87,22 +87,18 @@ const EditDetails: React.FC<EditDetailsProps> = ({
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     try {
-      await updatePatientDetailAction(
-        details.id,
-        {
-          chiefComplaint,
-          existingDisease,
-          signAndSymptoms,
-          examinationDetails,
-          labInvestigation,
-          xRaysOrMRs,
-          finalDiagnosis,
-          treatmentPresented,
-          followUp,
-          dynamicFields, // Include dynamic fields
-        },
-        userId
-      );
+      await updatePatientDetailAction(details.id, {
+        chiefComplaint,
+        existingDisease,
+        signAndSymptoms,
+        examinationDetails,
+        labInvestigation,
+        xRaysOrMRs,
+        finalDiagnosis,
+        treatmentPresented,
+        followUp,
+        dynamicFields, // Include dynamic fields
+      });
       formRef.current?.reset();
     } catch (error) {
       console.error("Failed to update patient details:", error);

@@ -1,6 +1,3 @@
-"use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import ModeToggle from "@/components/Mode-toggle";
@@ -10,17 +7,8 @@ interface NavbarClientProps {
 }
 
 export default function NavbarClient({ session }: NavbarClientProps) {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (session) {
-      // Redirect to /patients if the user is signed in
-      router.push("/patients");
-    }
-  }, [session, router]);
-
   return (
-    <nav className="flex justify-between items-center p-4 rounded-lg bg-transparent shadow-md border border-gray-300 dark:border-gray-700 absolute top-3 left-2 right-2 mx-auto">
+    <nav className="flex justify-between items-center p-4 rounded-lg bg-transparent backdrop-blur-lg z-50 shadow-md border border-gray-300 dark:border-gray-700 fixed top-3 left-2 right-2 mx-auto">
       {/* Left side: Mode Toggle */}
       <div>
         <ModeToggle />

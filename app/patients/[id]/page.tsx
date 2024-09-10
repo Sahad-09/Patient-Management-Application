@@ -3,7 +3,6 @@ import { getPatientDetails } from "@/lib/details";
 import { getPatient } from "@/lib/patients";
 import { Details, Patient } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import AddDetails from "@/components/DetailsComponents/AddDetails";
@@ -70,7 +69,7 @@ export default async function Page({ params }: PageProps) {
 
   if ("error" in detailResponse || "error" in patientResponse) {
     return (
-      <Card className="w-full max-w-3xl mx-auto">
+      <Card className="w-full max-w-5xl mx-auto mt-28">
         <CardContent className="pt-6">
           <div className="text-center text-red-500">
             Error:{" "}
@@ -90,7 +89,7 @@ export default async function Page({ params }: PageProps) {
 
   if (!patient) {
     return (
-      <Card className="w-full max-w-3xl mx-auto">
+      <Card className="w-full max-w-5xl mx-auto mt-28">
         <CardContent className="pt-6">
           <div className="text-center">Patient not found or access denied</div>
         </CardContent>
@@ -100,7 +99,7 @@ export default async function Page({ params }: PageProps) {
 
   if (!patientDetails || !Array.isArray(patientDetails)) {
     return (
-      <Card className="w-full max-w-3xl mx-auto">
+      <Card className="w-full max-w-5xl mx-auto mt-28">
         <CardContent className="pt-6">
           <div className="text-center">No patient details available</div>
         </CardContent>
@@ -113,8 +112,8 @@ export default async function Page({ params }: PageProps) {
     .map(transformDetails);
 
   return (
-    <div className="container my-auto">
-      <Card className="w-full max-w-4xl mx-auto">
+    <div className="container mx-auto pt-28">
+      <Card className="w-full max-w-5xl mx-auto">
         <CardHeader>
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
@@ -136,20 +135,18 @@ export default async function Page({ params }: PageProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[500px] pr-4 mt-4">
-            {validPatientDetails.length > 0 ? (
-              validPatientDetails.map((detail) => (
-                <PatientDetailCard
-                  key={detail.id}
-                  detail={detail}
-                  userId={userId}
-                  patientId={patientId}
-                />
-              ))
-            ) : (
-              <NoPatientDetails userId={userId} patientId={patientId} />
-            )}
-          </ScrollArea>
+          {validPatientDetails.length > 0 ? (
+            validPatientDetails.map((detail) => (
+              <PatientDetailSection
+                key={detail.id}
+                detail={detail}
+                userId={userId}
+                patientId={patientId}
+              />
+            ))
+          ) : (
+            <NoPatientDetails userId={userId} patientId={patientId} />
+          )}
         </CardContent>
       </Card>
     </div>
@@ -166,13 +163,15 @@ function DetailItem({
   if (!value) return null;
   return (
     <div className="mb-6">
-      <dt className="text-xl font-medium text-blue-300">{label}</dt>
-      <dd className="mt-2 text-lg text-gray-100">{value}</dd>
+      <dt className="text-lg font-medium text-blue-300 mb-2">{label}</dt>
+      <dd className="text-base text-gray-100 whitespace-pre-wrap break-words">
+        {value}
+      </dd>
     </div>
   );
 }
 
-function PatientDetailCard({
+function PatientDetailSection({
   detail,
   userId,
   patientId,
@@ -181,44 +180,33 @@ function PatientDetailCard({
   userId: string;
   patientId: string;
 }) {
-  console.log("Detailssss ", detail);
-
   return (
-    <Card className="mb-6">
-      <CardHeader className=" flex flex-row justify-between">
-        <CardTitle className="text-3xl font-semibold">Visit Details</CardTitle>
+    <div className="mb-8 border-b border-gray-700 pb-6">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-2xl font-semibold">Visit Details</h3>
         <EditDetails details={detail} userId={userId} patientId={patientId} />
-      </CardHeader>
-      <CardContent>
-        <dl className="space-y-4">
-          <DetailItem label="Chief Complaint" value={detail.chiefComplaint} />
-          <DetailItem label="Existing Disease" value={detail.existingDisease} />
-          <DetailItem
-            label="Signs and Symptoms"
-            value={detail.signAndSymptoms}
-          />
-          <DetailItem
-            label="Examination Details"
-            value={detail.examinationDetails}
-          />
-          <DetailItem
-            label="Lab Investigation"
-            value={detail.labInvestigation}
-          />
-          <DetailItem label="X-rays or MRIs" value={detail.xRaysOrMRs} />
-          <DetailItem label="Final Diagnosis" value={detail.finalDiagnosis} />
-          <DetailItem
-            label="Treatment Presented"
-            value={detail.treatmentPresented}
-          />
-          <DetailItem label="Follow-up" value={detail.followUp} />
-
-          {detail.dynamicFields?.map((field, index) => (
-            <DetailItem key={index} label={field.label} value={field.value} />
-          ))}
-        </dl>
-      </CardContent>
-    </Card>
+      </div>
+      <dl className="space-y-4">
+        <DetailItem label="Chief Complaint" value={detail.chiefComplaint} />
+        <DetailItem label="Existing Disease" value={detail.existingDisease} />
+        <DetailItem label="Signs and Symptoms" value={detail.signAndSymptoms} />
+        <DetailItem
+          label="Examination Details"
+          value={detail.examinationDetails}
+        />
+        <DetailItem label="Lab Investigation" value={detail.labInvestigation} />
+        <DetailItem label="X-rays or MRIs" value={detail.xRaysOrMRs} />
+        <DetailItem label="Final Diagnosis" value={detail.finalDiagnosis} />
+        <DetailItem
+          label="Treatment Presented"
+          value={detail.treatmentPresented}
+        />
+        <DetailItem label="Follow-up" value={detail.followUp} />
+        {detail.dynamicFields?.map((field, index) => (
+          <DetailItem key={index} label={field.label} value={field.value} />
+        ))}
+      </dl>
+    </div>
   );
 }
 
@@ -230,13 +218,11 @@ function NoPatientDetails({
   patientId: string;
 }) {
   return (
-    <Card>
-      <CardContent className=" mt-3 flex flex-row justify-between">
-        <h2 className="text-xl font-semibold mb-4 text-[#721B1C]">
-          No Patient Details
-        </h2>
-        <AddDetails userId={patientId} />
-      </CardContent>
-    </Card>
+    <div className="text-center py-8">
+      <h2 className="text-xl font-semibold mb-4 text-[#721B1C]">
+        No Patient Details
+      </h2>
+      <AddDetails userId={patientId} />
+    </div>
   );
 }

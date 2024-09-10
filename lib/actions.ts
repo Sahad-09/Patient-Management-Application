@@ -92,15 +92,11 @@ export async function deletePatientDetailAction(id: string, userId: string) {
 }
 
 // Update Patient Detail Action
+// Update Patient Detail Action
 export async function updatePatientDetailAction(
   id: string,
-  details: PatientDetail,
-  userId: string
+  details: PatientDetail
 ) {
-  const isOwner = await verifyPatientOwnership(id, userId);
-  if (!isOwner) {
-    throw new Error("You don't have permission to update this patient's details");
-  }
   await updatePatientDetail(id, details);
-  revalidatePath(`/patients/${userId}`);
+  revalidatePath(`/patients/${id}`);
 }
