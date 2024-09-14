@@ -15,7 +15,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // Assuming you have an Input component
+import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
 
 interface AddDetailsProps {
   userId: string;
@@ -23,6 +24,7 @@ interface AddDetailsProps {
 
 const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [chiefComplaint, setChiefComplaint] = useState("");
   const [existingDisease, setExistingDisease] = useState("");
   const [signAndSymptoms, setSignAndSymptoms] = useState("");
@@ -33,23 +35,19 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
   const [treatmentPresented, setTreatmentPresented] = useState("");
   const [followUp, setFollowUp] = useState("");
 
-  // State for managing dynamic fields
   const [dynamicFields, setDynamicFields] = useState<
     Array<{ label: string; value: string }>
   >([]);
   const formRef = useRef<HTMLFormElement>(null);
 
-  // Handler for adding a new dynamic field
   const handleAddField = () => {
     setDynamicFields([...dynamicFields, { label: "", value: "" }]);
   };
 
-  // Handler for removing a dynamic field
   const handleRemoveField = (index: number) => {
     setDynamicFields(dynamicFields.filter((_, i) => i !== index));
   };
 
-  // Handler for updating dynamic fields
   const handleFieldChange = (
     index: number,
     key: "label" | "value",
@@ -62,6 +60,7 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    setIsLoading(true);
     try {
       await createPatientDetailAction(
         {
@@ -74,14 +73,16 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
           finalDiagnosis,
           treatmentPresented,
           followUp,
-          dynamicFields, // Include dynamic fields
+          dynamicFields,
         },
         userId
       );
       formRef.current?.reset();
-      // Optionally close the sheet if needed
+      setIsOpen(false);
     } catch (error) {
       console.error("Failed to add patient details:", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -194,7 +195,6 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
               />
             </div>
 
-            {/* Dynamic fields */}
             <div className="space-y-2 mt-4 flex flex-col">
               <Label>Custom Fields (Add if Required)</Label>
               {dynamicFields.map((field, index) => (
@@ -238,17 +238,23 @@ const AddDetails: React.FC<AddDetailsProps> = ({ userId }) => {
                 type="button"
                 onClick={() => {
                   formRef.current?.reset();
-                  setIsOpen(false); // Close the sheet when cancel is clicked
+                  setIsOpen(false);
                 }}
                 variant="outline"
+                disabled={isLoading}
               >
                 Cancel
               </Button>
-              <SheetClose asChild>
-                <Button variant="addPatient" type="submit">
-                  Save Changes
-                </Button>
-              </SheetClose>
+              <Button variant="addPatient" type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
             </SheetFooter>
           </form>
         </SheetContent>
